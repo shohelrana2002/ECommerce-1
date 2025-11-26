@@ -4,7 +4,7 @@ import Welcome from "@/components/Register/Welcome";
 import { useState } from "react";
 
 const RegisterPage = () => {
-  const [step, setStep] = useState(2);
+  const [step, setStep] = useState(1);
   return (
     <div>
       {step === 1 ? (

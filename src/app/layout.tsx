@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import NextAuthSessionProvider from "@/Providers/NextAuthSessionProvider";
 
 export const metadata: Metadata = {
   title: "ShopVerse BD  |20 minutes grocery delivery",
@@ -15,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="w-full min-h-screen bg-linear-to-b from-green-100 to-white">
-        {children}
+        <NextAuthSessionProvider>{children}</NextAuthSessionProvider>
       </body>
     </html>
   );

@@ -1,8 +1,6 @@
 "use client";
 import { motion } from "motion/react";
-import { stePropTypes } from "@/types/propTypes";
 import {
-  ArrowLeft,
   Eye,
   EyeOff,
   Leaf,
@@ -14,24 +12,25 @@ import {
 import React, { useState } from "react";
 import Image from "next/image";
 import googleIcon from "./../../assets/google.png";
-import axios from "axios";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
+
 const LoginForm = () => {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
-  //   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
+  const session = useSession();
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setLoading(true);
-      const { data } = await axios.post("/api/auth/register", {
-        name,
+      await signIn("credentials", {
         email,
         password,
       });
-      console.log(data);
     } catch (error) {
       setLoading(false);
       console.log(error);
@@ -39,6 +38,7 @@ const LoginForm = () => {
       setLoading(false);
     }
   };
+  console.log(session);
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-10 bg-white relative">
       <motion.h2
@@ -89,17 +89,7 @@ const LoginForm = () => {
         }}
         className="flex flex-col max-w-sm w-full gap-5"
       >
-        {/* <div className="relative">
-          <User className="absolute left-3  top-3 w-5 h-5 text-secondary" />
-          <input
-            type="text"
-            className="w-full border border-gray-300 rounded-xl py-3 pl-10 text-secondary  focus:ring-2 focus:ring-primary focus:outline-none"
-            name="name"
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-            placeholder="Your Full Name"
-          />
-        </div> */}
+        {JSON.stringify(session)}
         <div className="relative">
           <Mail className="absolute left-3  top-3 w-5 h-5 text-secondary" />
           <input
@@ -159,17 +149,21 @@ const LoginForm = () => {
           <span className="mx-4 text-gray-500 font-medium">OR</span>
           <hr className="grow border-t border-gray-300" />
         </div>
-        <button className="flex items-center justify-center gap-2 px-4 py-2 bg-green-900 text-white rounded-md hover:bg-primary transition-colors duration-200">
+        <button
+          type="button"
+          onClick={() => signIn("google")}
+          className="flex cursor-pointer items-center justify-center gap-2 px-4 py-2 bg-green-900 text-white rounded-md hover:bg-primary transition-colors duration-200"
+        >
           <Image src={googleIcon} width={30} height={10} alt="google" /> Sign in
           with Google
         </button>
-        <Link
-          href={"/register"}
+        <p
+          onClick={() => router.push("/register")}
           className="inline-flex cursor-pointer justify-center text-secondary mt-6 items-center gap-1s"
         >
           Are You New Create Account ? <LogIn className="w-5 h-4" />
           <span className="text-primary"> SignUp</span>
-        </Link>
+        </p>
       </motion.form>
     </div>
   );

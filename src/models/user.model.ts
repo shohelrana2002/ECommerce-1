@@ -5,9 +5,10 @@ interface IUser {
   _id?: mongoose.ObjectId;
   name: string;
   email: string;
-  password: string;
+  password?: string;
   mobile?: string;
   role: "user" | "deliveryBoy" | "admin";
+  image?: string;
 }
 // step----2
 const userSchema = new Schema<IUser>(
@@ -23,7 +24,7 @@ const userSchema = new Schema<IUser>(
     },
     password: {
       type: String,
-      required: true,
+      required: false,
     },
     mobile: {
       type: String,
@@ -34,6 +35,10 @@ const userSchema = new Schema<IUser>(
       enum: ["user", "deliveryBoy", "admin"],
       default: "user",
       required: true,
+    },
+    image: {
+      type: String,
+      required: false,
     },
   },
   { timestamps: true }

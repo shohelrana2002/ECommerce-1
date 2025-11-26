@@ -16,8 +16,10 @@ import React, { useState } from "react";
 import Image from "next/image";
 import googleIcon from "./../../assets/google.png";
 import axios from "axios";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 const RegisterForm = ({ nextStep }: stePropTypes) => {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -166,17 +168,21 @@ const RegisterForm = ({ nextStep }: stePropTypes) => {
           <span className="mx-4 text-gray-500 font-medium">OR</span>
           <hr className="grow border-t border-gray-300" />
         </div>
-        <button className="flex items-center justify-center gap-2 px-4 py-2 bg-green-900 text-white rounded-md hover:bg-primary transition-colors duration-200">
+        <button
+          type="button"
+          onClick={() => signIn("google")}
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-green-900 text-white rounded-md hover:bg-primary transition-colors duration-200"
+        >
           <Image src={googleIcon} width={30} height={10} alt="google" /> Sign in
           with Google
         </button>
-        <Link
-          href={"/login"}
+        <p
+          onClick={() => router.push("/login")}
           className="inline-flex cursor-pointer justify-center text-secondary mt-6 items-center gap-1s"
         >
           ALready Have an Account ? <LogIn className="w-5 h-4" />
           <span className="text-primary"> SignIn</span>
-        </Link>
+        </p>
       </motion.form>
     </div>
   );
