@@ -4,12 +4,12 @@ const mongoDBUrl = process.env.DB_URL;
 if (!mongoDBUrl) {
   throw new Error(" server connect error: DB_URL missing in environment");
 }
-
+// step-----2
 let cached = global.mongoose;
 if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
-
+// step-------->3
 const connectDB = async () => {
   if (cached.conn) {
     return cached.conn;

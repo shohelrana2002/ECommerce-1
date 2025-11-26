@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
+    // step-----> 1 authorize
     Credentials({
       credentials: {
         email: { label: "Email", type: "email" },
@@ -35,6 +36,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
+  // step----->2 callBack st token-->user
   callbacks: {
     // toke data to set user
     jwt({ token, user }) {
@@ -46,6 +48,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return token;
     },
+    // step---->3 token data set in session
     session({ session, token }) {
       if (session.user) {
         session.user.id = token?.id as string;
@@ -56,13 +59,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     },
   },
+  // step---->4 pages set
   pages: {
     signIn: "/login",
     error: "/login",
   },
+  // step-->5 session declare
   session: {
     strategy: "jwt",
     maxAge: 10 * 24 * 60 * 60 * 1000, //token expire 10days
   },
+  // step-------6 secret declare
   secret: process.env.AUTH_SECRET,
 });
