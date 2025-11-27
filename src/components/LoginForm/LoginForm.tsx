@@ -31,6 +31,7 @@ const LoginForm = () => {
         email,
         password,
       });
+      router.push("/");
     } catch (error) {
       setLoading(false);
       console.log(error);
@@ -151,7 +152,7 @@ const LoginForm = () => {
         </div>
         <button
           type="button"
-          onClick={() => signIn("google")}
+          onClick={() => signIn("google", { callbackUrl: "/" })}
           className="flex cursor-pointer items-center justify-center gap-2 px-4 py-2 bg-green-900 text-white rounded-md hover:bg-primary transition-colors duration-200"
         >
           <Image src={googleIcon} width={30} height={10} alt="google" /> Sign in

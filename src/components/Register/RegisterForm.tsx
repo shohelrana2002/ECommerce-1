@@ -34,7 +34,10 @@ const RegisterForm = ({ nextStep }: stePropTypes) => {
         email,
         password,
       });
-      console.log(data);
+
+      if (data?.createdAt) {
+        router.push("/login");
+      }
     } catch (error) {
       setLoading(false);
       console.log(error);
@@ -170,7 +173,7 @@ const RegisterForm = ({ nextStep }: stePropTypes) => {
         </div>
         <button
           type="button"
-          onClick={() => signIn("google")}
+          onClick={() => signIn("google", { callbackUrl: "/" })}
           className="flex items-center justify-center gap-2 px-4 py-2 bg-green-900 text-white rounded-md hover:bg-primary transition-colors duration-200"
         >
           <Image src={googleIcon} width={30} height={10} alt="google" /> Sign in
