@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 // step---1
-interface IUser {
+export interface IUser {
   _id?: mongoose.ObjectId;
   name: string;
   email: string;

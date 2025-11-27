@@ -13,7 +13,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import googleIcon from "./../../assets/google.png";
 import { useRouter } from "next/navigation";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -21,7 +21,6 @@ const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
-  const session = useSession();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +33,6 @@ const LoginForm = () => {
       });
       if (result?.error) {
         setLoading(false);
-        console.log("Login Error:", result.error);
         return;
       }
       router.push("/");
@@ -96,7 +94,6 @@ const LoginForm = () => {
         }}
         className="flex flex-col max-w-sm w-full gap-5"
       >
-        {JSON.stringify(session)}
         <div className="relative">
           <Mail className="absolute left-3  top-3 w-5 h-5 text-secondary" />
           <input
@@ -135,7 +132,7 @@ const LoginForm = () => {
           return (
             <button
               disabled={!validation || loading}
-              className={`w-full font-semibold py-3 rounded-xl transition-all duration-200 shadow-md inline-flex items-center justify-center gap-2
+              className={`w-full font-semibold py-3 cursor-pointer rounded-xl transition-all duration-200 shadow-md inline-flex items-center justify-center gap-2
               ${
                 validation
                   ? "bg-primary hover:bg-green-700 text-white"

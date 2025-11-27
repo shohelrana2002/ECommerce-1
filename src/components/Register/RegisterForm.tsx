@@ -150,7 +150,7 @@ const RegisterForm = ({ nextStep }: stePropTypes) => {
           return (
             <button
               disabled={!validation || loading}
-              className={`w-full font-semibold py-3 rounded-xl transition-all duration-200 shadow-md inline-flex items-center justify-center gap-2
+              className={`w-full font-semibold py-3 cursor-pointer rounded-xl transition-all duration-200 shadow-md inline-flex items-center justify-center gap-2
               ${
                 validation
                   ? "bg-primary hover:bg-green-700 text-white"
