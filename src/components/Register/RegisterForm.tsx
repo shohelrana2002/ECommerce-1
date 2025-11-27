@@ -174,7 +174,7 @@ const RegisterForm = ({ nextStep }: stePropTypes) => {
         <button
           type="button"
           onClick={() => signIn("google", { callbackUrl: "/" })}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-green-900 text-white rounded-md hover:bg-primary transition-colors duration-200"
+          className="flex items-center cursor-pointer justify-center gap-2 px-4 py-2 bg-green-900 text-white rounded-md hover:bg-primary transition-colors duration-200"
         >
           <Image src={googleIcon} width={30} height={10} alt="google" /> Sign in
           with Google

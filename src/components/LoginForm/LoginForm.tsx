@@ -23,14 +23,20 @@ const LoginForm = () => {
   const [show, setShow] = useState(false);
   const session = useSession();
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setLoading(true);
-      await signIn("credentials", {
+      const result = await signIn("credentials", {
         email,
         password,
+        redirect: false,
       });
+      if (result?.error) {
+        setLoading(false);
+        console.log("Login Error:", result.error);
+        return;
+      }
       router.push("/");
     } catch (error) {
       setLoading(false);
@@ -39,7 +45,7 @@ const LoginForm = () => {
       setLoading(false);
     }
   };
-  console.log(session);
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-10 bg-white relative">
       <motion.h2
@@ -77,7 +83,7 @@ const LoginForm = () => {
         Visit Now ShopVerse BD <Leaf className="w-5 h-5 text-primary" />
       </motion.p>
       <motion.form
-        onSubmit={handleRegister}
+        onSubmit={handleLogin}
         initial={{
           opacity: 0,
         }}
@@ -140,7 +146,7 @@ const LoginForm = () => {
               {loading ? (
                 <LoaderCircle className="w-5 h-5 animate-spin" />
               ) : (
-                " Register"
+                " Login"
               )}
             </button>
           );

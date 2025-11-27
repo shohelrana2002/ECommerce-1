@@ -88,7 +88,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   // step-->5 session declare
   session: {
     strategy: "jwt",
-    maxAge: 10 * 24 * 60 * 60 * 1000, //token expire 10days
+    maxAge: 10 * 24 * 60 * 60, //token expire 10days
   },
   // step-------6 secret declare
   secret: process.env.AUTH_SECRET,
