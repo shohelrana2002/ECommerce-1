@@ -12,6 +12,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
+      {
+        protocol: "https",
+        hostname:
+          "blob:http://localhost:3000/60dc62c4-e2b6-4133-b55a-f26a405d4d87",
+      },
     ],
   },
 };

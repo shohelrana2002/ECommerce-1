@@ -2,9 +2,11 @@
 import axios from "axios";
 import { ArrowBigRight, Bike, LucidePhone, User, UserCog } from "lucide-react";
 import { motion } from "motion/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 export default function EditRoleMobile() {
+  const { update } = useSession();
   const router = useRouter();
   const [roles, setRole] = useState([
     { id: "admin", label: "Admin", icon: UserCog },
@@ -19,6 +21,7 @@ export default function EditRoleMobile() {
         role: selectedRole,
         mobile: mobileNumber,
       });
+      await update({ role: selectedRole });
       if (res?.status === 200) {
         router.push("/");
       }

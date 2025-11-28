@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
+export type TUnit = "kg" | "g" | "liter" | "ml" | "piece" | "packet" | "dozen";
 // step ----------> interface
 export interface IGrocery {
   _id?: mongoose.Types.ObjectId;
@@ -7,7 +8,8 @@ export interface IGrocery {
   description?: string;
   category: string;
   price: string;
-  unit: string;
+  stock: string;
+  unit: TUnit;
   image: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -22,6 +24,8 @@ export const grocerySchema = new Schema<IGrocery>(
     category: {
       type: String,
       enum: [
+        "Fish",
+        "Meat",
         "Fruits & Vegetables",
         "Dairy & Eggs",
         "Rice, Atta & Grains",
@@ -42,9 +46,14 @@ export const grocerySchema = new Schema<IGrocery>(
     },
     unit: {
       type: String,
+      enum: ["kg", "g", "liter", "ml", "piece", "packet", "dozen"],
       required: true,
     },
     image: {
+      type: String,
+      required: true,
+    },
+    stock: {
       type: String,
       required: true,
     },

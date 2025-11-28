@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import NextAuthSessionProvider from "@/Providers/NextAuthSessionProvider";
+import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
   title: "ShopVerse BD  |20 minutes grocery delivery",
@@ -16,6 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="w-full min-h-screen bg-linear-to-b from-green-100 to-white">
+        <ToastContainer />
         <NextAuthSessionProvider>{children}</NextAuthSessionProvider>
       </body>
     </html>
