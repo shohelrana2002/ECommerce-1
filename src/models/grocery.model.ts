@@ -4,6 +4,7 @@ export type TUnit = "kg" | "g" | "liter" | "ml" | "piece" | "packet" | "dozen";
 // step ----------> interface
 export interface IGrocery {
   _id?: mongoose.Types.ObjectId;
+  email?: string;
   name: string;
   description?: string;
   category: string;
@@ -43,6 +44,10 @@ export const grocerySchema = new Schema<IGrocery>(
     price: {
       type: String,
       required: true,
+    },
+    email: {
+      type: String,
+      required: false,
     },
     unit: {
       type: String,

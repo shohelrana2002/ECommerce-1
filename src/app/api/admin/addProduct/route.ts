@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
       description,
       category,
       stock,
+      email: session?.user?.email,
       image: imageUrl,
     });
 
