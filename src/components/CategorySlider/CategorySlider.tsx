@@ -65,6 +65,21 @@ const CategorySlider = () => {
     setShowLeft(scrollLeft > 0);
     setShowRight(scrollLeft + clientWidth <= scrollWidth - 5);
   };
+
+  // auto scroll bar add
+  useEffect(() => {
+    const autoSlide = setInterval(() => {
+      if (!scrollRef.current) return;
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef?.current;
+      if (scrollLeft + clientWidth >= scrollWidth - 5) {
+        scrollRef.current.scrollTo({ left: 0, behavior: "smooth" }); //scrollTo-->age jay
+      } else {
+        scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
+      }
+    }, 2000);
+    return () => clearInterval(autoSlide);
+  }, []);
+
   useEffect(() => {
     scrollRef.current?.addEventListener("scroll", checkScroll);
     // eslint-disable-next-line react-hooks/set-state-in-effect
