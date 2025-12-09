@@ -76,7 +76,7 @@ const CategorySlider = () => {
       } else {
         scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
       }
-    }, 2000);
+    }, 5000);
     return () => clearInterval(autoSlide);
   }, []);
 

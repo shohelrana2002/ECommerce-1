@@ -17,7 +17,7 @@ export default function EditRoleMobile() {
   const [mobileNumber, setMobileNumber] = useState("");
   const handleEdit = async () => {
     try {
-      const res = await axios.post("/api/auth/user/edit-mobile-role", {
+      const res = await axios.post("/api/user/edit-mobile-role", {
         role: selectedRole,
         mobile: mobileNumber,
       });
