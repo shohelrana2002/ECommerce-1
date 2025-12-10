@@ -19,6 +19,8 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { signOut } from "next-auth/react";
 import { createPortal } from "react-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 export default function Navbar({ user }: { user: IUser }) {
   const menuRef = useRef<HTMLDivElement>(null);
@@ -26,6 +28,7 @@ export default function Navbar({ user }: { user: IUser }) {
   const [openDropdown, setOpenDropdown] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { cartData } = useSelector((state: RootState) => state.cart);
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -206,7 +209,7 @@ export default function Navbar({ user }: { user: IUser }) {
             >
               <ShoppingCartIcon className="w-6 h-6 text-primary" />
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1">
-                0
+                {cartData?.length ? cartData?.length : 0}
               </span>
             </Link>
           </>

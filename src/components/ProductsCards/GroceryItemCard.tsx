@@ -1,10 +1,33 @@
 "use client";
-import { IGrocery } from "@/models/grocery.model";
-import { ShoppingCart } from "lucide-react";
+import { TUnit } from "@/models/grocery.model";
+import { Minus, Plus, ShoppingCart } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
+import {
+  addToCart,
+  decreaseQuantity,
+  increaseQuantity,
+} from "@/redux/cartSlice";
+import mongoose from "mongoose";
+interface IGrocery {
+  _id: mongoose.Types.ObjectId;
+  email?: string;
+  name: string;
+  description?: string;
+  category: string;
+  price: string;
+  stock: string;
+  unit: TUnit;
+  image: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 const GroceryItemCard = ({ item }: { item: IGrocery }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { cartData } = useSelector((state: RootState) => state.cart);
+  const cartItem = cartData.find((i) => i?._id === item?._id);
   return (
     <motion.div
       initial={{ opacity: 0, y: 30, scale: 0.95 }}
@@ -41,14 +64,42 @@ const GroceryItemCard = ({ item }: { item: IGrocery }) => {
           </span>
         </div>
 
-        {/* Add to Cart Button */}
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          className="mt-2 flex cursor-pointer  items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded-xl shadow-md transition-all duration-200"
-        >
-          <ShoppingCart size={18} />
-          Add to Cart
-        </motion.button>
+        {cartItem ? (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.99 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mt-4 flex justify-center items-center bg-green-50 border border-green-200 rounded-full  py-2 px-4 gap-4"
+          >
+            <button
+              onClick={() => dispatch(increaseQuantity(item?._id))}
+              className="w-7 h-7 cursor-pointer flex items-center justify-center rounded-full bg-green-100n hover:bg-green-200 transition-all"
+            >
+              <Plus size={16} className="text-primary" />
+            </button>
+            <span className="text-sm font-extrabold text-primary">
+              {cartItem?.quantity}
+            </span>
+            <button
+              onClick={() => dispatch(decreaseQuantity(item?._id))}
+              className="w-7 h-7 cursor-pointer flex items-center justify-center rounded-full bg-green-100n hover:bg-green-200 transition-all"
+            >
+              <Minus size={16} className="text-primary" />
+            </button>
+          </motion.div>
+        ) : (
+          <>
+            {/* Add to Cart Button */}
+            <motion.button
+              onClick={() => dispatch(addToCart({ ...item, quantity: 1 }))}
+              whileTap={{ scale: 0.95 }}
+              className="mt-2 flex cursor-pointer  items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded-xl shadow-md transition-all duration-200"
+            >
+              <ShoppingCart size={18} />
+              Add to Cart
+            </motion.button>
+          </>
+        )}
       </div>
     </motion.div>
   );
