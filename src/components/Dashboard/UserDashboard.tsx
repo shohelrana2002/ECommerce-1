@@ -1,9 +1,22 @@
 import Hero from "../Home/Hero";
 import CategorySlider from "../CategorySlider/CategorySlider";
 import connectDB from "@/lib/dbConnect";
-import { Grocery, IGrocery } from "@/models/grocery.model";
+import { Grocery, TUnit } from "@/models/grocery.model";
 import GroceryItemCard from "../ProductsCards/GroceryItemCard";
-
+import mongoose from "mongoose";
+interface IGrocery {
+  _id: mongoose.Types.ObjectId;
+  email?: string;
+  name: string;
+  description?: string;
+  category: string;
+  price: string;
+  stock: string;
+  unit: TUnit;
+  image: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 export default async function UserDashboard() {
   await connectDB();
 
@@ -18,11 +31,8 @@ export default async function UserDashboard() {
           Popular Grocery Items
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-          {convertToJson.map((item: IGrocery) => (
-            <GroceryItemCard
-              key={item._id ? item._id.toString() : undefined}
-              item={item}
-            />
+          {convertToJson.map((item: IGrocery, index: number) => (
+            <GroceryItemCard key={index} item={item} />
           ))}
         </div>
       </div>

@@ -204,7 +204,7 @@ export default function Navbar({ user }: { user: IUser }) {
 
             {/* Cart */}
             <Link
-              href={"/"}
+              href={" /user/cart"}
               className="relative bg-white rounded-full w-11 h-11 flex items-center justify-center shadow-md hover:scale-105 transition"
             >
               <ShoppingCartIcon className="w-6 h-6 text-primary" />

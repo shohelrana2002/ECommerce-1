@@ -2,13 +2,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import mongoose from "mongoose";
 
 export interface ICart {
-  _id?: mongoose.Types.ObjectId;
+  _id: mongoose.Types.ObjectId; // ?
   email?: string;
   name: string;
   description?: string;
   category: string;
   price: string;
   stock: string;
+  unit: string;
   quantity: number;
   image: string;
   createdAt?: Date;
@@ -49,9 +50,12 @@ const cartSlice = createSlice({
         );
       }
     },
+    removeFromCart: (state, action: PayloadAction<mongoose.Types.ObjectId>) => {
+      state.cartData = state.cartData.filter((i) => i?._id !== action.payload);
+    },
   },
 });
 
-export const { addToCart, increaseQuantity, decreaseQuantity } =
+export const { addToCart, increaseQuantity, decreaseQuantity, removeFromCart } =
   cartSlice.actions;
 export default cartSlice.reducer;
