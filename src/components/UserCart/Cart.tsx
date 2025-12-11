@@ -12,10 +12,14 @@ import {
   removeFromCart,
 } from "@/redux/cartSlice";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const Cart = () => {
+  const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-  const { cartData } = useSelector((state: RootState) => state.cart);
+  const { cartData, deliveryFee, finalTotal, subTotal } = useSelector(
+    (state: RootState) => state.cart
+  );
   return (
     <div className="w-[95%] sm:w-[90%] mx-auto mt-8 mb-24 relative">
       <Link
@@ -121,6 +125,30 @@ const Cart = () => {
             className="bg-white rounded-2xl shadow-xl p-6 h-fit sticky top-24 border border-gray-100 flex flex-col"
           >
             <h4 className="text-lg sm:text-xl font-bold ">Order Summary</h4>
+            <div className="space-y-3 text-gray-700 text-sm md:text-base">
+              <div className="flex justify-between">
+                <span>Subtotal:</span>
+                <span className="text-primary font-semibold">৳{subTotal}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Delivery Fee:</span>
+                <span className="text-primary font-semibold">
+                  ৳{deliveryFee}
+                </span>
+              </div>
+              <hr className="my-3" />
+              <div className="flex font-medium text-lg sm:text-xl justify-between">
+                <span>Total:</span>
+                <span className="text-primary">৳{finalTotal}</span>
+              </div>
+            </div>
+            <motion.button
+              onClick={() => router.push("/user/checkout")}
+              whileTap={{ scale: 0.95 }}
+              className=" cursor-pointer mt-4 text-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-2xl  shadow-md transition-all duration-200 "
+            >
+              Proceed to Checkout
+            </motion.button>
           </motion.div>
         </div>
       )}
