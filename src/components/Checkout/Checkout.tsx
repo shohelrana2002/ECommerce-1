@@ -15,8 +15,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import "leaflet/dist/leaflet.css";
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import L, { LatLngExpression } from "leaflet";
+import axios from "axios";
 
 const markIcon = new L.Icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/128/9800/9800512.png",
@@ -37,20 +38,74 @@ const Checkout = () => {
   const [position, setPosition] = useState<[number, number] | null>(null);
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((pos) => {
-        console.log(pos);
-        const { latitude, longitude } = pos.coords;
-        setPosition([latitude, longitude]);
-      });
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          // console.log(pos);
+          const { latitude, longitude } = pos.coords;
+          setPosition([latitude, longitude]);
+        },
+        (error) => {
+          console.log("location error", error);
+        },
+        { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
+      );
     }
   }, []);
   useEffect(() => {
     if (userData) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setAddress((prev) => ({ ...prev, fullName: userData.name || "" }));
       setAddress((prev) => ({ ...prev, mobile: userData.mobile || "" }));
     }
   }, [userData]);
+
+  const DargAbleMarker: React.FC = () => {
+    const map = useMap();
+    useEffect(() => {
+      map.setView(position as LatLngExpression, 15, { animate: true });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [position, map]);
+
+    return (
+      <Marker
+        icon={markIcon}
+        position={position as LatLngExpression}
+        draggable={true}
+        eventHandlers={{
+          dragend: (e: L.LeafletEvent) => {
+            const marker = e.target as L.Marker;
+            const { lat, lng } = marker.getLatLng();
+            setPosition([lat, lng]);
+          },
+        }}
+      >
+        <Popup>{/* A pretty CSS3 popup. <br /> Easily customizable. */}</Popup>
+      </Marker>
+    );
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!position) return null;
+      try {
+        const res = await axios.get(
+          `https://nominatim.openstreetmap.org/reverse?lat=${position[0]}&lon=${position[1]}&format=json`
+        );
+        setAddress((prev) => ({
+          ...prev,
+          fullAddress: res.data.display_name,
+          city: res.data.address.city || res.data.address.town || "",
+          state:
+            res.data.address.state_district || res.data.address.state || "",
+          pincode: res.data.address.postcode || "",
+        }));
+        console.log(res.data);
+      } catch (error) {
+        console.log("address error ", error);
+      }
+    };
+    fetchData();
+  }, [position]);
+
   return (
     <div className="w-[92%] md:w-[80%] mx-auto py-10 relative ">
       <motion.button
@@ -208,14 +263,7 @@ const Checkout = () => {
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   />
-                  <Marker
-                    icon={markIcon}
-                    position={position as LatLngExpression}
-                  >
-                    <Popup>
-                      A pretty CSS3 popup. <br /> Easily customizable.
-                    </Popup>
-                  </Marker>
+                  <DargAbleMarker />
                 </MapContainer>
               )}
             </div>
