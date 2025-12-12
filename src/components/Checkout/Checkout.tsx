@@ -18,13 +18,14 @@ import "leaflet/dist/leaflet.css";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import L, { LatLngExpression } from "leaflet";
 import axios from "axios";
-
+import { OpenStreetMapProvider } from "leaflet-geosearch";
 const markIcon = new L.Icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/128/9800/9800512.png",
   iconSize: [40, 40],
   iconAnchor: [20, 40],
 });
 const Checkout = () => {
+  const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
   const { userData } = useSelector((state: RootState) => state.user);
   const [address, setAddress] = useState({
@@ -82,7 +83,20 @@ const Checkout = () => {
       </Marker>
     );
   };
+  // search query input here fu
 
+  const handleSearchQuery = async () => {
+    const provider = new OpenStreetMapProvider();
+
+    // search
+    const result = await provider.search({ query: searchQuery });
+    // console.log(result);
+    if (result) {
+      setPosition([result[0].y, result[0].x]);
+    }
+  };
+
+  // data fetch and set to ui
   useEffect(() => {
     const fetchData = async () => {
       if (!position) return null;
@@ -98,7 +112,7 @@ const Checkout = () => {
             res.data.address.state_district || res.data.address.state || "",
           pincode: res.data.address.postcode || "",
         }));
-        console.log(res.data);
+        // console.log(res.data);
       } catch (error) {
         console.log("address error ", error);
       }
@@ -245,8 +259,13 @@ const Checkout = () => {
                 type="text"
                 className="flex-1  border rounded-lg p-3  text-sm focus:ring-2 focus:ring-green-500"
                 placeholder="search your address"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <button className="text-white bg-primary  px-5 rounded-lg hover:bg-green-900 transition-all font-medium">
+              <button
+                onClick={handleSearchQuery}
+                className="text-white cursor-pointer bg-primary  px-5 rounded-lg hover:bg-green-900 transition-all font-medium"
+              >
                 Search
               </button>
             </div>
