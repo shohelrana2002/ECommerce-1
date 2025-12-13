@@ -36,7 +36,7 @@ const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "online">("cod");
   const router = useRouter();
   const { userData } = useSelector((state: RootState) => state.user);
-  const { deliveryFee, finalTotal, subTotal } = useSelector(
+  const { deliveryFee, finalTotal, subTotal, cartData } = useSelector(
     (state: RootState) => state.cart
   );
   const [address, setAddress] = useState({
@@ -145,6 +145,43 @@ const Checkout = () => {
         },
         { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
       );
+    }
+  };
+
+  // post  data
+  const handleCod = async () => {
+    if (!position) return null;
+    try {
+      const result = await axios.post("/api/user/order", {
+        userId: userData?._id,
+        items: cartData.map((i) => ({
+          grocery: i._id,
+          name: i.name,
+          price: i.price,
+          unit: i.unit,
+          image: i.image,
+          quantity: i.quantity,
+        })),
+        totalAmount: finalTotal,
+        address: {
+          fullName: address.fullName,
+          mobile: address.mobile,
+          city: address.city,
+          state: address.state,
+          pincode: address.pincode || "",
+          fullAddress: address.fullAddress,
+          latitude: position[0],
+          longitude: position[1],
+        },
+        paymentMethod,
+      });
+      if (result?.status === 201) {
+      }
+      if (result) {
+        router.push("/user/order-success");
+      }
+    } catch (error) {
+      console.log("Order Post error :", error);
     }
   };
   return (
@@ -387,6 +424,14 @@ const Checkout = () => {
               <span className=" text-primary">৳{finalTotal}</span>
             </div>
             <motion.button
+              onClick={() => {
+                if (paymentMethod === "cod") {
+                  handleCod();
+                } else {
+                  alert("online Payment");
+                  // handleOnlineOrder();
+                }
+              }}
               whileTap={{ scale: 0.96 }}
               className="text-white cursor-pointer  bg-primary  p-2 w-full mx-auto rounded-lg hover:bg-green-900 transition-all font-medium"
             >

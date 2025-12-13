@@ -14,7 +14,7 @@ interface IOrder {
       quantity: number;
     }
   ];
-  totalAmount: string;
+  totalAmount: number;
   paymentMethod: "cod" | "online";
   address: {
     fullName: string;
@@ -68,7 +68,7 @@ const orderSchema = new Schema<IOrder>(
     ],
 
     totalAmount: {
-      type: String,
+      type: Number,
       required: true,
     },
 
