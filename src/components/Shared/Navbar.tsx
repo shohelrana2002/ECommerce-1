@@ -325,7 +325,7 @@ export default function Navbar({ user }: { user: IUser }) {
                   <>
                     <Link
                       onClick={() => setOpenDropdown(false)}
-                      href="/"
+                      href="/user/my-orders"
                       className="inline-flex gap-x-2 px-4 py-2   text-gray-700 hover:bg-primary hover:text-white rounded-lg"
                     >
                       <Package /> My Orders
