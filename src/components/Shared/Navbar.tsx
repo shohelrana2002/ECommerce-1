@@ -235,7 +235,7 @@ export default function Navbar({ user }: { user: IUser }) {
               </Link>
 
               <Link
-                href="/admin/manage-product"
+                href="/admin/manage-orders"
                 className="flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-100 text-orange-700 hover:bg-orange-600 hover:text-white transition font-medium"
               >
                 <Settings size={18} />

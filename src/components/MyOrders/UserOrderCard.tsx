@@ -56,7 +56,7 @@ const UserOrderCard = ({ order }: { order: IOrder }) => {
             {order?.isPaid ? "Paid" : "Unpaid"}
           </span>
           <span
-            className={`px-3 py-1 text-xs font-semibold border rounded ${statusColor(
+            className={`px-3 py-1 capitalize text-xs font-semibold border rounded ${statusColor(
               order?.status
             )} `}
           >
