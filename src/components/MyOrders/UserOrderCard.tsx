@@ -1,9 +1,19 @@
 "use client";
 import { IOrder } from "@/models/order.model";
-import { CreditCard, MapPin, Truck } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  CreditCard,
+  MapPin,
+  Package,
+  Truck,
+} from "lucide-react";
 import { motion } from "motion/react";
+import Image from "next/image";
+import React from "react";
 
 const UserOrderCard = ({ order }: { order: IOrder }) => {
+  const [expended, setExpended] = React.useState(false);
   const statusColor = (status: string) => {
     switch (status) {
       case "pending":
@@ -75,6 +85,81 @@ const UserOrderCard = ({ order }: { order: IOrder }) => {
         <div className="flex items-center gap-2 text-gray-700 text-sm">
           <MapPin size={16} className="text-primary" />
           <span className="truncate"> {order?.address.fullAddress}</span>
+        </div>
+        <div className="border-t pt-3 border-gray-200">
+          <button
+            onClick={() => setExpended(!expended)}
+            className="w-full cursor-pointer flex justify-between items-center text-sm font-medium
+            text-gray-700 hover:text-primary transition
+            "
+          >
+            <span className="flex items-center">
+              <Package size={16} className="text-primary mr-2" />
+              {expended
+                ? "Hide Details"
+                : `View Details ${order?.items.length}`}
+            </span>
+            {expended ? (
+              <ChevronUp size={20} className="text-primary" />
+            ) : (
+              <ChevronDown size={20} className="text-primary " />
+            )}
+          </button>
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{
+              height: expended ? "auto" : 0,
+              opacity: expended ? 1 : 0,
+            }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            {expended && (
+              <div className="mt-3 space-y-4 ">
+                {order?.items.map((item, index) => (
+                  <div
+                    className="flex items-center justify-between bg-gray-50 rounded-xl  px-3 py-2 hover:bg-gray-100 transition gap-4"
+                    key={index}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Image
+                        src={item?.image}
+                        alt={item?.name}
+                        width={50}
+                        height={50}
+                        className="rounded-lg object-cover"
+                      />
+                      <div>
+                        <p className="text-sm font-medium text-gray-800">
+                          {item?.name}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {item?.quantity} x {item?.unit}
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold  text-gray-800">
+                        ৳ {Number(item?.price) * item?.quantity}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        </div>
+        <div className="flex justify-between items-center font-semibold pt-3 border-t border-gray-800">
+          <div className="flex items-center gap-2 text-gray-700 text-sm">
+            <Truck size={16} className="text-primary" />
+            <span className="text-primary font-semibold capitalize">
+              {order?.status}
+            </span>
+          </div>
+          <div className="text-lg  ">
+            Total:
+            <span className="text-primary"> ৳{order?.totalAmount}</span>
+          </div>
         </div>
       </div>
     </motion.div>
