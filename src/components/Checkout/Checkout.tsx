@@ -184,6 +184,39 @@ const Checkout = () => {
       console.log("Order Post error :", error);
     }
   };
+  // handle Stripe Online Payment
+
+  const handleOnlineOrder = async () => {
+    if (!position) return null;
+    try {
+      const res = await axios.post("/api/user/payment", {
+        userId: userData?._id,
+        items: cartData.map((i) => ({
+          grocery: i._id,
+          name: i.name,
+          price: i.price,
+          unit: i.unit,
+          image: i.image,
+          quantity: i.quantity,
+        })),
+        totalAmount: finalTotal,
+        address: {
+          fullName: address.fullName,
+          mobile: address.mobile,
+          city: address.city,
+          state: address.state,
+          pincode: address.pincode || "",
+          fullAddress: address.fullAddress,
+          latitude: position[0],
+          longitude: position[1],
+        },
+        paymentMethod,
+      });
+      window.location.href = res?.data?.url;
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="w-[92%] md:w-[80%] mx-auto py-10 relative ">
       <motion.button
@@ -428,8 +461,8 @@ const Checkout = () => {
                 if (paymentMethod === "cod") {
                   handleCod();
                 } else {
-                  alert("online Payment");
-                  // handleOnlineOrder();
+                  // alert("online Payment");
+                  handleOnlineOrder();
                 }
               }}
               whileTap={{ scale: 0.96 }}

@@ -33,7 +33,7 @@ const OrderSuccess = () => {
         transition={{ duration: 0.4, delay: 0.3 }}
         className="text-3xl md:text-4xl font-bold text-primary mt-6"
       >
-        Order Place Successfully
+        Order Placed Successfully 🎉
       </motion.h1>
       <motion.p
         initial={{ opacity: 0, y: 30 }}
@@ -41,7 +41,7 @@ const OrderSuccess = () => {
         transition={{ duration: 0.4, delay: 0.7 }}
         className="text-gray-600 mt-3 text-sm md:text-base max-w-md"
       >
-        Thank You For Shopping Here
+        Thank you for shopping with us. You can track your order anytime from{" "}
         <span className="font-bold text-primary"> My Orders</span>
       </motion.p>
       <motion.div
@@ -77,7 +77,7 @@ const OrderSuccess = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: [0.2, 0.6, 0.2] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-0 left-50 w-full h-full"
+        className="absolute top-0 left-50  h-full"
       >
         <div className="absolute top-20 left[-10%] w-2 h-2 bg-green-400 rounded-full animate-bounce" />
         <div className="absolute top-30 left[-30%] w-2 h-2 bg-green-400 rounded-full animate-pulse" />
