@@ -18,7 +18,7 @@ import React from "react";
 const AdminOrderCard = ({ order }: { order: IOrder }) => {
   const [expended, setExpended] = React.useState(false);
   const statusOptions = ["pending", "out for delivery"];
-  // status color
+  // status color function
   const statusColor = (status: string) => {
     switch (status) {
       case "pending":
