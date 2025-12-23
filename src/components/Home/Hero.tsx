@@ -1,23 +1,9 @@
 "use client";
 import { AnimatePresence, motion } from "motion/react";
-import {
-  Apple,
-  Carrot,
-  Beef,
-  Fish,
-  Cookie,
-  Milk,
-  Sandwich,
-  Candy,
-  Coffee,
-  Soup,
-  Wheat,
-  Salad,
-  Popcorn,
-  Utensils,
-} from "lucide-react";
+import { Apple, Carrot, Beef, Fish, Cookie } from "lucide-react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { getSocket } from "@/lib/socket";
 
 export const groceryCategories = [
   {
@@ -83,6 +69,10 @@ export const groceryCategories = [
 ];
 
 export default function Hero() {
+  useEffect(() => {
+    let socket = getSocket();
+  }, []);
+
   const [current, setCurrent] = useState(0);
   useEffect(() => {
     const time = setInterval(() => {

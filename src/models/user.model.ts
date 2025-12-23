@@ -8,6 +8,17 @@ export interface IUser {
   password?: string;
   mobile?: string;
   role: "user" | "deliveryBoy" | "admin";
+  location?: {
+    type: {
+      type: StringConstructor;
+      enum: string[];
+      default: string;
+    };
+    coordinates: {
+      type: NumberConstructor[];
+      default: number[];
+    };
+  };
   image?: string;
 }
 // step----2
@@ -36,6 +47,18 @@ const userSchema = new Schema<IUser>(
       default: "user",
       required: true,
     },
+    // location mongoDB Near
+    location: {
+      type: {
+        type: String,
+        enum: ["point"],
+        default: "point",
+      },
+      coordinates: {
+        type: [Number],
+        default: [0, 0],
+      },
+    },
     image: {
       type: String,
       required: false,
@@ -43,5 +66,8 @@ const userSchema = new Schema<IUser>(
   },
   { timestamps: true }
 );
+/*===========location ===============*/
+userSchema.index({ location: "2dsphere" });
+
 // step--->3
 export const User = mongoose.models.User || mongoose.model("User", userSchema);

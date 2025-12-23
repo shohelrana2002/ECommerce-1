@@ -92,16 +92,26 @@ const AdminOrderCard = ({ order }: { order: IOrder }) => {
           >
             {order?.status}
           </span>
-          <select
-            className="mt-2 border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            defaultValue={order?.status}
-          >
-            {statusOptions.map((statusOption) => (
-              <option key={statusOption} value={statusOption}>
-                {statusOption.toUpperCase()}
-              </option>
-            ))}
-          </select>
+          {order?.status === "delivered" ? (
+            <span
+              className={`px-3 py-1 text-xs capitalize font-semibold border rounded ${statusColor(
+                order?.status
+              )} `}
+            >
+              Delivered✔
+            </span>
+          ) : (
+            <select
+              className="mt-2 border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              defaultValue={order?.status}
+            >
+              {statusOptions.map((statusOption) => (
+                <option key={statusOption} value={statusOption}>
+                  {statusOption.toUpperCase()}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
       </div>
       {/*  */}
