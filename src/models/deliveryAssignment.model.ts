@@ -34,6 +34,10 @@ const deliveryAssignmentSchema = new mongoose.Schema<IDeliveryAssignment>(
     status: {
       type: String,
       enum: ["broadcasted", "assigned", "completed"],
+      default: "broadcasted",
+    },
+    acceptedAt: {
+      type: Date,
     },
   },
   { timestamps: true }

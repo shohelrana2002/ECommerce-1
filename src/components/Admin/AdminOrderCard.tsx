@@ -1,6 +1,7 @@
 "use client";
 
 import { IOrder } from "@/models/order.model";
+import axios from "axios";
 import {
   ChevronDown,
   ChevronUp,
@@ -13,22 +14,34 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
-import React from "react";
-
+import React, { useState } from "react";
+// status color function
+const statusColor = (status: string) => {
+  switch (status) {
+    case "pending":
+      return "bg-yellow-100 text-yellow-800 border-yellow-300";
+    case "out for delivery":
+      return "bg-blue-100 text-blue-800 border-blue-300";
+    case "delivered":
+      return "bg-green-100 text-green-800 border-green-300";
+    default:
+      return "bg-gray-100 text-gray-800 border-gray-300";
+  }
+};
 const AdminOrderCard = ({ order }: { order: IOrder }) => {
   const [expended, setExpended] = React.useState(false);
-  const statusOptions = ["pending", "out for delivery"];
-  // status color function
-  const statusColor = (status: string) => {
-    switch (status) {
-      case "pending":
-        return "bg-yellow-100 text-yellow-800 border-yellow-300";
-      case "out for delivery":
-        return "bg-blue-100 text-blue-800 border-blue-300";
-      case "delivered":
-        return "bg-green-100 text-green-800 border-green-300";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-300";
+  const statusOptions = ["pending", "out of delivery"];
+  const [status, setStatus] = useState<string>(order?.status);
+  const updateStatus = async (orderId: string, status: string) => {
+    try {
+      const result = await axios.post(
+        `/api/admin/update-order-status/${orderId}`,
+        { status }
+      );
+      console.log(result.data);
+      setStatus(status);
+    } catch (error) {
+      console.log(error);
     }
   };
   return (
@@ -90,20 +103,21 @@ const AdminOrderCard = ({ order }: { order: IOrder }) => {
               order?.status
             )} `}
           >
-            {order?.status}
+            {status}
           </span>
           {order?.status === "delivered" ? (
-            <span
-              className={`px-3 py-1 text-xs capitalize font-semibold border rounded ${statusColor(
+            <span>
+              {/* className={`px-3 py-1 text-xs capitalize font-semibold border rounded ${statusColor(
                 order?.status
-              )} `}
-            >
-              Delivered✔
+              )} `} */}
             </span>
           ) : (
             <select
+              onChange={(e) =>
+                updateStatus(order?._id?.toString()!, e.target.value)
+              }
               className="mt-2 border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              defaultValue={order?.status}
+              defaultValue={status}
             >
               {statusOptions.map((statusOption) => (
                 <option key={statusOption} value={statusOption}>
@@ -180,7 +194,7 @@ const AdminOrderCard = ({ order }: { order: IOrder }) => {
         <div className="flex items-center gap-2 text-gray-700 text-sm">
           <Truck size={16} className="text-primary" />
           <span className="text-primary font-semibold capitalize">
-            {order?.status}
+            {status}
           </span>
         </div>
         <div className="text-lg  ">
