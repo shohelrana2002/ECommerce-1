@@ -7,7 +7,13 @@ export async function proxy(req: NextRequest) {
     return NextResponse.next();
   }
   // Public routes
-  const publicRoutes = ["/login", "/register", "/api/auth"];
+  const publicRoutes = [
+    "/login",
+    "/register",
+    "/api/auth",
+    "/api/socket/connect",
+    "/api/socket/update-location",
+  ];
 
   // Skip public routes
   if (publicRoutes.some((route) => pathname.startsWith(route))) {

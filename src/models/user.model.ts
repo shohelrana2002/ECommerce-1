@@ -20,6 +20,8 @@ export interface IUser {
     };
   };
   image?: string;
+  socketId?: string | null;
+  isOnline?: boolean;
 }
 // step----2
 const userSchema = new Schema<IUser>(
@@ -51,8 +53,8 @@ const userSchema = new Schema<IUser>(
     location: {
       type: {
         type: String,
-        enum: ["point"],
-        default: "point",
+        enum: ["Point"],
+        default: "Point",
       },
       coordinates: {
         type: [Number],
@@ -62,6 +64,14 @@ const userSchema = new Schema<IUser>(
     image: {
       type: String,
       required: false,
+    },
+    socketId: {
+      type: String,
+      default: null,
+    },
+    isOnline: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

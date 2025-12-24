@@ -74,9 +74,10 @@ const Cart = () => {
                 >
                   <div className="relative w-28 h-28 sm:24 sm:h-24  md:28 md:h28 shrink-0  rounded-xl overflow-hidden bg-gray-50">
                     <Image
-                      className="object-contain p-3 transition-transform  duration-300 hover:scale-105"
+                      className="object-contain  p-3 transition-transform  duration-300 hover:scale-105"
                       src={item?.image}
                       fill
+                      sizes={"110px"}
                       alt={item?.name}
                     />
                   </div>

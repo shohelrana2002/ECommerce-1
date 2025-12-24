@@ -7,7 +7,9 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
   try {
     await connectDB();
-    const products = await Order.find({});
+    const products = await Order.find({})
+      .populate("user")
+      .sort({ createdAt: -1 });
     return NextResponse.json(products);
   } catch (error) {
     return NextResponse.json({ message: `failed to get Mange data ${error}` });

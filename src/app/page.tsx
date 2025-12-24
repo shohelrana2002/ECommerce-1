@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import AdminDashboard from "@/components/Dashboard/AdminDashboard";
 import DeliveryBoyDashboard from "@/components/Dashboard/DeliveryBoyDashboard";
 import UserDashboard from "@/components/Dashboard/UserDashboard";
+import GeoUpdater from "@/components/GeoUpdater/GeoUpdater";
 import EditRoleMobile from "@/components/Home/EditRoleMobile";
 import Navbar from "@/components/Shared/Navbar";
 import connectDB from "@/lib/dbConnect";
@@ -26,7 +27,7 @@ export default async function Home() {
   return (
     <>
       <Navbar user={userData} />
-
+      <GeoUpdater userId={userData?._id} />
       {user?.role === "admin" && <AdminDashboard />}
       {user?.role === "deliveryBoy" && <DeliveryBoyDashboard />}
       {user?.role === "user" && <UserDashboard />}

@@ -1,5 +1,6 @@
 import connectDB from "@/lib/dbConnect";
 import Order from "@/models/order.model";
+import { User } from "@/models/user.model";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(
@@ -20,7 +21,10 @@ export async function POST(
     order.status = status;
     let availableDeliveryBoy: any = [];
     if (status === "out of delivery" && !order?.assignment) {
-      availableDeliveryBoy = ["test"];
+      const { latitude, longitude } = order?.address;
+      const nearByDeliveryBoys = await User.find({
+        role: "deliveryBoy",
+      });
     }
   } catch (error) {
     return NextResponse.json(
