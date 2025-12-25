@@ -30,6 +30,7 @@ export async function POST(
           $near: {
             $geometry: {
               type: "Point",
+              // coordinates: [Number(longitude), Number(latitude)],
               coordinates: [Number(longitude), Number(latitude)],
             },
             $maxDistance: 10000, //10km distance
@@ -47,7 +48,7 @@ export async function POST(
         (b) => !busyIdSet.has(String(b?._id))
       );
       const candidates = availableDeliveryBoys.map((b: any) => b._id);
-      if (candidates.length === 0) {
+      if (candidates?.length == 0) {
         await order.save();
         return NextResponse.json(
           { message: "No delivery Boys Available Now !!" },
@@ -65,15 +66,18 @@ export async function POST(
         id: b._id,
         mobile: b.mobile,
         name: b.name,
-        latitude: b.location.coordinates[0],
-        longitude: b.location.coordinates[1],
+        latitude: b.location.coordinates[1],
+        longitude: b.location.coordinates[0],
+
+        // latitude: b.location.coordinates[1],
+        // longitude: b.location.coordinates[0],
       }));
+
       await deliveryAssignment.populate("order");
     }
     /*============order save now data============= */
     await order.save();
     await order.populate("user");
-
     return NextResponse.json(
       {
         assignment: order.assignment?._id,

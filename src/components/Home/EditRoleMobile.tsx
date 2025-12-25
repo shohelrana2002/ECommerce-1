@@ -4,7 +4,7 @@ import { ArrowBigRight, Bike, LucidePhone, User, UserCog } from "lucide-react";
 import { motion } from "motion/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 export default function EditRoleMobile() {
   const { update } = useSession();
   const router = useRouter();
@@ -15,6 +15,7 @@ export default function EditRoleMobile() {
   ]);
   const [selectedRole, setSelectedRole] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
+  const [loading, setLoading] = useState(false);
   const handleEdit = async () => {
     try {
       const res = await axios.post("/api/user/edit-mobile-role", {
@@ -29,6 +30,26 @@ export default function EditRoleMobile() {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    const fetchAdmin = async () => {
+      setLoading(true);
+      try {
+        const { data } = await axios.get("/api/check-for-admin", {
+          withCredentials: true,
+        });
+        if (data?.adminExist) {
+          setRole((prev) => prev.filter((r) => r.id !== "admin"));
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAdmin();
+  }, []);
+  if (loading) return <></>;
   return (
     <div className="min-h-screen flex items-center flex-col bg-linear-to-b from-green-100 to-white p-6">
       <motion.h1
