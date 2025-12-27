@@ -163,7 +163,7 @@ const LoginForm = () => {
         </button>
         <p
           onClick={() => router.push("/register")}
-          className="inline-flex cursor-pointer justify-center text-secondary mt-6 items-center gap-1s"
+          className="inline-flex cursor-pointer justify-center text-secondary mt-6 items-center gap-1"
         >
           Are You New Create Account ? <LogIn className="w-5 h-4" />
           <span className="text-primary"> SignUp</span>

@@ -16,6 +16,7 @@ export default function EditRoleMobile() {
   const [selectedRole, setSelectedRole] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [loading, setLoading] = useState(false);
+  /*============== select here role ========== */
   const handleEdit = async () => {
     try {
       const res = await axios.post("/api/user/edit-mobile-role", {
@@ -30,7 +31,7 @@ export default function EditRoleMobile() {
       console.log(error);
     }
   };
-
+  /*==============check for admin jut fast time========== */
   useEffect(() => {
     const fetchAdmin = async () => {
       setLoading(true);

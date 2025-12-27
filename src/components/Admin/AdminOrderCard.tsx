@@ -32,14 +32,15 @@ const AdminOrderCard = ({ order }: { order: IOrder }) => {
   const [expended, setExpended] = React.useState(false);
   const statusOptions = ["pending", "out of delivery"];
   const [status, setStatus] = useState<string>(order?.status);
+  /*=============== status updated here ================*/
   const updateStatus = async (orderId: string, status: string) => {
     try {
       const result = await axios.post(
         `/api/admin/update-order-status/${orderId}`,
         { status }
       );
-      console.log(result.data);
       setStatus(status);
+      console.log(result.data);
     } catch (error) {
       console.log(error);
     }

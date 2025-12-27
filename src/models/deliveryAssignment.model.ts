@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { mongo } from "mongoose";
 
 export interface IDeliveryAssignment {
   id?: mongoose.Types.ObjectId;
@@ -19,7 +18,7 @@ const deliveryAssignmentSchema = new mongoose.Schema<IDeliveryAssignment>(
     },
     order: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Order",
     },
     broadcastedTo: [
       {

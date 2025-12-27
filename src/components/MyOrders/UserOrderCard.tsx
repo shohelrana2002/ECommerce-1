@@ -1,4 +1,5 @@
 "use client";
+import { getSocket } from "@/lib/socket";
 import { IOrder } from "@/models/order.model";
 import {
   ChevronDown,
@@ -10,10 +11,11 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const UserOrderCard = ({ order }: { order: IOrder }) => {
   const [expended, setExpended] = React.useState(false);
+  const [status, setStatus] = useState(order?.status);
   const statusColor = (status: string) => {
     switch (status) {
       case "pending":
@@ -26,6 +28,18 @@ const UserOrderCard = ({ order }: { order: IOrder }) => {
         return "bg-gray-100 text-gray-800 border-gray-300";
     }
   };
+  /*=======called api socket ==========*/
+  useEffect((): any => {
+    const socket = getSocket();
+    socket.on("order-status-update", (data) => {
+      //status change na hole toString a convert kor_te ha_be
+      if (data?.orderId == order?._id) {
+        setStatus(data?.status);
+      }
+    });
+    return () => socket.off("order-status-update");
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
@@ -57,10 +71,10 @@ const UserOrderCard = ({ order }: { order: IOrder }) => {
           </span>
           <span
             className={`px-3 py-1 capitalize text-xs font-semibold border rounded ${statusColor(
-              order?.status
+              status
             )} `}
           >
-            {order?.status}
+            {status}
           </span>
         </div>
       </div>
@@ -153,7 +167,7 @@ const UserOrderCard = ({ order }: { order: IOrder }) => {
           <div className="flex items-center gap-2 text-gray-700 text-sm">
             <Truck size={16} className="text-primary" />
             <span className="text-primary font-semibold capitalize">
-              {order?.status}
+              {status}
             </span>
           </div>
           <div className="text-lg  ">

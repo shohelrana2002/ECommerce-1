@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { LeafIcon } from "lucide-react";
 import AdminOrderCard from "@/components/Admin/AdminOrderCard";
+import { getSocket } from "@/lib/socket";
 const MangeProductsTable = () => {
   const router = useRouter();
   const [orders, setOrders] = useState<IOrder[]>([]);
@@ -28,7 +29,14 @@ const MangeProductsTable = () => {
 
     fetchProducts();
   }, []);
-
+  /*=================== socket api call ===============*/
+  useEffect((): any => {
+    const socket = getSocket();
+    socket.on("new-order", (newOrder) => {
+      setOrders((prev) => [newOrder, ...prev]);
+    });
+    return () => socket.off("new-order");
+  }, []);
   if (loading)
     return (
       <div className="flex flex-col items-center justify-center py-14 text-gray-600">

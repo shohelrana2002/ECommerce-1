@@ -1,4 +1,5 @@
 import connectDB from "@/lib/dbConnect";
+import emitEventHandler from "@/lib/emitEventHandler";
 import DeliveryAssignment from "@/models/deliveryAssignment.model";
 import Order from "@/models/order.model";
 import { User } from "@/models/user.model";
@@ -49,6 +50,11 @@ export async function POST(
       const candidates = availableDeliveryBoys.map((b: any) => b._id);
       if (candidates?.length == 0) {
         await order.save();
+        // socket call here
+        await emitEventHandler("order-status-update", {
+          orderId: order?._id,
+          status: order?.status,
+        });
         return NextResponse.json(
           { message: "No delivery Boys Available Now !!" },
           { status: 200 }
@@ -60,6 +66,20 @@ export async function POST(
         broadcastedTo: candidates,
         status: "broadcasted",
       });
+
+      /*==================socket api call here ==================== */
+      await deliveryAssignment.populate("order");
+      for (const boyId of candidates) {
+        const boy = await User.findById(boyId);
+        if (boy?.socketId) {
+          await emitEventHandler(
+            "new-assignment",
+            deliveryAssignment,
+            boy?.socketId
+          );
+        }
+      }
+
       order.assignment = deliveryAssignment._id;
       deliveryBoysPayload = availableDeliveryBoys.map((b) => ({
         id: b._id,
@@ -74,6 +94,11 @@ export async function POST(
     /*============order save now data============= */
     await order.save();
     await order.populate("user");
+    // socket call here
+    await emitEventHandler("order-status-update", {
+      orderId: order?._id,
+      status: order?.status,
+    });
     return NextResponse.json(
       {
         assignment: order.assignment?._id,

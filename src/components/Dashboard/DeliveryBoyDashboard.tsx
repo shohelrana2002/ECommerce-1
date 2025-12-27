@@ -1,9 +1,9 @@
-import React from "react";
+import DeliveryBoyDashboard from "../DeliveryBoy/DeliveryBoyDashboard";
 
-export default function DeliveryBoyDashboard() {
+export default function DeliveryBoyDashboardPage() {
   return (
-    <div>
-      <p>Dashboard Delivery Boy</p>
-    </div>
+    <>
+      <DeliveryBoyDashboard />
+    </>
   );
 }
