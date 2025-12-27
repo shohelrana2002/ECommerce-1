@@ -79,5 +79,5 @@ const userSchema = new Schema<IUser>(
 /*===========location ===============*/
 userSchema.index({ location: "2dsphere" });
 
-// step--->3
+// step--->
 export const User = mongoose.models.User || mongoose.model("User", userSchema);

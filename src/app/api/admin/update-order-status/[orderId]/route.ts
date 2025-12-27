@@ -15,14 +15,14 @@ export async function POST(
     const order = await Order.findById(orderId).populate("user");
     if (!order) {
       return NextResponse.json(
-        { message: "No Order Id Find !!" },
+        { message: "Order Not found !!" },
         { status: 400 }
       );
     }
     order.status = status;
     let deliveryBoysPayload: any = [];
-    if (status === "out of delivery" && !order?.assignment) {
-      const { latitude, longitude } = order?.address;
+    if (status === "out of delivery" && !order.assignment) {
+      const { latitude, longitude } = order.address;
       /*==========delivery boy find here 10km distance==========*/
       const nearByDeliveryBoys = await User.find({
         role: "deliveryBoy",
@@ -30,8 +30,7 @@ export async function POST(
           $near: {
             $geometry: {
               type: "Point",
-              // coordinates: [Number(longitude), Number(latitude)],
-              coordinates: [Number(longitude), Number(latitude)],
+              coordinates: [Number(latitude), Number(longitude)],
             },
             $maxDistance: 10000, //10km distance
           },
@@ -66,11 +65,8 @@ export async function POST(
         id: b._id,
         mobile: b.mobile,
         name: b.name,
-        latitude: b.location.coordinates[1],
-        longitude: b.location.coordinates[0],
-
-        // latitude: b.location.coordinates[1],
-        // longitude: b.location.coordinates[0],
+        longitude: b.location?.coordinates?.[0] ?? null,
+        latitude: b.location?.coordinates?.[1] ?? null,
       }));
 
       await deliveryAssignment.populate("order");
