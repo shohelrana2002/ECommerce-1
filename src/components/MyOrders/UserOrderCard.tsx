@@ -1,6 +1,6 @@
 "use client";
 import { getSocket } from "@/lib/socket";
-import { IOrder } from "@/models/order.model";
+
 import {
   ChevronDown,
   ChevronUp,
@@ -8,10 +8,12 @@ import {
   MapPin,
   Package,
   Truck,
+  UserCheck2,
 } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import { IOrder } from "../Admin/AdminOrderCard";
 
 const UserOrderCard = ({ order }: { order: IOrder }) => {
   const [expended, setExpended] = React.useState(false);
@@ -100,6 +102,44 @@ const UserOrderCard = ({ order }: { order: IOrder }) => {
           <MapPin size={16} className="text-primary" />
           <span className="truncate"> {order?.address.fullAddress}</span>
         </div>
+        {/* ===== Assigned Delivery Boy Info ===== */}
+        {order?.assignedDeliveryBoy && (
+          <div className="mt-5  mx-auto">
+            <div className="flex items-center gap-4 rounded-2xl border border-blue-200 bg-linear-to-r from-blue-50 to-blue-100 p-4 shadow-sm">
+              {/* Icon */}
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white shadow-md">
+                <UserCheck2 size={22} />
+              </div>
+
+              {/* Info */}
+              <div className="flex-1">
+                <p className="text-xs uppercase tracking-wide text-blue-600 font-semibold">
+                  Assigned Delivery Partner
+                </p>
+
+                <p className="text-base font-semibold text-gray-800 mt-0.5">
+                  {order.assignedDeliveryBoy.name}
+                </p>
+
+                <p className="text-sm text-gray-600 flex items-center gap-1 mt-1">
+                  📞
+                  <span className="font-medium">
+                    +88 {order.assignedDeliveryBoy.mobile}
+                  </span>
+                </p>
+              </div>
+
+              {/* Call Button */}
+              <a
+                href={`tel:${order.assignedDeliveryBoy.mobile}`}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow hover:bg-blue-700 active:scale-95 transition-all"
+              >
+                📞 Call
+              </a>
+            </div>
+          </div>
+        )}
+
         <div className="border-t pt-3 border-gray-200">
           <button
             onClick={() => setExpended(!expended)}

@@ -1,6 +1,5 @@
 "use client";
-
-import { IOrder } from "@/models/order.model";
+import { IUser } from "@/models/user.model";
 import axios from "axios";
 import {
   ChevronDown,
@@ -11,7 +10,9 @@ import {
   PhoneCall,
   Truck,
   User,
+  UserCheck2,
 } from "lucide-react";
+import mongoose from "mongoose";
 import { motion } from "motion/react";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -28,6 +29,40 @@ const statusColor = (status: string) => {
       return "bg-gray-100 text-gray-800 border-gray-300";
   }
 };
+
+// interface
+export interface IOrder {
+  _id?: mongoose.Types.ObjectId;
+  user: mongoose.Types.ObjectId;
+  items: [
+    {
+      grocery: mongoose.Types.ObjectId;
+      name: string;
+      price: string;
+      unit: string;
+      image: string;
+      quantity: number;
+    }
+  ];
+  isPaid: boolean;
+  totalAmount: number;
+  paymentMethod: "cod" | "online";
+  address: {
+    fullName: string;
+    mobile: string;
+    city: string;
+    state: string;
+    pincode?: string;
+    fullAddress: string;
+    latitude: string;
+    longitude: string;
+  };
+  status: "pending" | "out of delivery" | "delivered";
+  assignment?: mongoose.Types.ObjectId;
+  assignedDeliveryBoy?: IUser;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 const AdminOrderCard = ({ order }: { order: IOrder }) => {
   const [expended, setExpended] = React.useState(false);
   const statusOptions = ["pending", "out of delivery"];
@@ -97,6 +132,43 @@ const AdminOrderCard = ({ order }: { order: IOrder }) => {
               </>
             )}
           </p>
+          {/* ===== Assigned Delivery Boy Info ===== */}
+          {order?.assignedDeliveryBoy && (
+            <div className="mt-5  mx-auto">
+              <div className="flex items-center gap-4 rounded-2xl border border-blue-200 bg-linear-to-r from-blue-50 to-blue-100 p-4 shadow-sm">
+                {/* Icon */}
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white shadow-md">
+                  <UserCheck2 size={22} />
+                </div>
+
+                {/* Info */}
+                <div className="flex-1">
+                  <p className="text-xs uppercase tracking-wide text-blue-600 font-semibold">
+                    Assigned Delivery Partner
+                  </p>
+
+                  <p className="text-base font-semibold text-gray-800 mt-0.5">
+                    {order.assignedDeliveryBoy.name}
+                  </p>
+
+                  <p className="text-sm text-gray-600 flex items-center gap-1 mt-1">
+                    📞
+                    <span className="font-medium">
+                      +88 {order.assignedDeliveryBoy.mobile}
+                    </span>
+                  </p>
+                </div>
+
+                {/* Call Button */}
+                <a
+                  href={`tel:${order.assignedDeliveryBoy.mobile}`}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow hover:bg-blue-700 active:scale-95 transition-all"
+                >
+                  📞 Call
+                </a>
+              </div>
+            </div>
+          )}
         </div>
         <div className="flex flex-col items-start md:items-end gap-2">
           <span

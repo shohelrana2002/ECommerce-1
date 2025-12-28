@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
     await connectDB();
     const session = await auth();
     const order = await Order.find({ user: session?.user?.id })
-      .populate("user")
+      .populate("user assignedDeliveryBoy")
       .sort({ createdAt: -1 });
     if (!order) {
       return NextResponse.json({ message: "Order cant get" }, { status: 400 });

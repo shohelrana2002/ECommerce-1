@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   try {
     await connectDB();
     const products = await Order.find({})
-      .populate("user")
+      .populate("user assignedDeliveryBoy")
       .sort({ createdAt: -1 });
     return NextResponse.json(products);
   } catch (error) {

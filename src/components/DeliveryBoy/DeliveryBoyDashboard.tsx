@@ -26,6 +26,16 @@ const DeliveryBoyDashboard = () => {
     });
     return () => socket.off("new-assignment");
   }, []);
+  const handleAccepted = async (id: string) => {
+    try {
+      const result = await axios.get(
+        `/api/delivery/assignment/${id}/accept-assignment`
+      );
+      console.log(result);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="mt-24 w-full min-h-screen  bg-gray-50 p-4">
       <div className="max-w-3xl mx-auto">
@@ -45,10 +55,11 @@ const DeliveryBoyDashboard = () => {
               <p className="flex items-center">
                 <b>Address:</b>
                 <MapPin size={16} className="text-primary font-bold" />
-                {data?.order?.address?.fullAddress.slice(0, 83)}
+                {data?.order?.address?.fullAddress}
               </p>
               <div className="flex justify-center gap-x-4 mt-4">
                 <button
+                  onClick={() => handleAccepted(data?._id)}
                   className="w-full px-6 py-2 bg-primary text-white rounded-full font-semibold 
       hover:bg-green-500 cursor-pointer transition-colors duration-300 shadow-md"
                 >
