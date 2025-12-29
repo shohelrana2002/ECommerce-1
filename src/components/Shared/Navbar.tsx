@@ -129,7 +129,7 @@ export default function Navbar({ user }: { user: IUser }) {
               </Link>
 
               <Link
-                href="/admin/manage-product"
+                href="/admin/manage-orders"
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center gap-3 p-3 rounded-xl 
                 bg-white/10 hover:bg-orange-500/30 transition-all

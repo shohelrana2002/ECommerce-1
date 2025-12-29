@@ -1,23 +1,65 @@
 "use client";
 
 import { getSocket } from "@/lib/socket";
+import { RootState } from "@/redux/store";
 import axios from "axios";
 import { MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
-
+import { useSelector } from "react-redux";
+import LiveMap from "../Shared/LiveMap";
+interface ILocation {
+  latitude: number;
+  longitude: number;
+}
 const DeliveryBoyDashboard = () => {
   const [assignments, setAssignments] = useState<any[]>([]);
+  const { userData } = useSelector((state: RootState) => state.user);
+  const [activeOrder, setActiveOrder] = useState<any>(null);
+  const [userLocation, setUserLocation] = useState<ILocation>({
+    latitude: 0,
+    longitude: 0,
+  });
+  const [deliveryBoyLocation, setDeliveryBoyLocation] = useState<ILocation>({
+    latitude: 0,
+    longitude: 0,
+  });
+
+  /*=============assignments fetch here======== */
+  const assignmentsFetch = async () => {
+    try {
+      const { data } = await axios.get("/api/delivery/get-assignments");
+      setAssignments(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  /*==============location update============= */
   useEffect(() => {
-    const assignmentsFetch = async () => {
-      try {
-        const { data } = await axios.get("/api/delivery/get-assignments");
-        setAssignments(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    assignmentsFetch();
-  }, []);
+    const socket = getSocket();
+    if (!userData?._id) return;
+    if (!navigator?.geolocation) return;
+    const watcher = navigator.geolocation.watchPosition(
+      (pos) => {
+        const lat = pos?.coords?.latitude;
+        const lon = pos?.coords?.longitude;
+        setDeliveryBoyLocation({
+          latitude: lat,
+          longitude: lon,
+        });
+        socket.emit("update-location", {
+          userId: userData?._id,
+          latitude: lat,
+          longitude: lon,
+        });
+      },
+      (error: any) => {
+        console.error("Geolocation error:", error.message);
+      },
+      { enableHighAccuracy: true }
+    );
+    return () => navigator.geolocation.clearWatch(watcher);
+  }, [userData?._id]);
   /*==============socket api call here============= */
   useEffect((): any => {
     const socket = getSocket();
@@ -26,6 +68,7 @@ const DeliveryBoyDashboard = () => {
     });
     return () => socket.off("new-assignment");
   }, []);
+  /*================ accepted order handle here=============== */
   const handleAccepted = async (id: string) => {
     try {
       const result = await axios.get(
@@ -36,6 +79,54 @@ const DeliveryBoyDashboard = () => {
       console.log(error);
     }
   };
+  /*================ Current Delivery Get Here */
+  const fetchCurrentOrder = async () => {
+    try {
+      const { data } = await axios.get("/api/delivery/current-order");
+      if (data?.active) {
+        console.log(data?.assignment?.order?.address);
+        setActiveOrder(data?.assignment);
+        setUserLocation({
+          latitude: data?.assignment?.order?.address?.latitude,
+          longitude: data?.assignment?.order?.address?.longitude,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    assignmentsFetch();
+    fetchCurrentOrder();
+  }, [userData]);
+  /*================== location or curet delivery tha_kle eta dek_kh_be========== */
+  if (activeOrder && userLocation) {
+    return (
+      <div className="min-h-screen mt-28 bg-gray-50">
+        <div className="max-w-3xl mx-auto">
+          <h1 className="text-2xl md:text-3xl text-primary mb-2 font-semibold ">
+            Active Delivery
+          </h1>
+          <p className="text-xs">
+            <b>Active Order:</b>
+            <span className="text-primary font-semibold">
+              #{activeOrder?.order?._id.slice(-6)}
+            </span>
+          </p>
+          {/* ============= map sho Now =========== */}
+          <div className="rounded-xl  border shadow-lg overflow-hidden mb-6">
+            <LiveMap
+              userLocation={userLocation}
+              deliveryBoyLocation={deliveryBoyLocation}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  /*================== location or curet delivery na  tha_kle eta dek_kh_be========== */
+
   return (
     <div className="mt-24 w-full min-h-screen  bg-gray-50 p-4">
       <div className="max-w-3xl mx-auto">

@@ -15,7 +15,7 @@ import {
 import mongoose from "mongoose";
 import { motion } from "motion/react";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // status color function
 const statusColor = (status: string) => {
   switch (status) {
@@ -31,7 +31,7 @@ const statusColor = (status: string) => {
 };
 
 // interface
-export interface IOrder {
+export interface IOrderAdmin {
   _id?: mongoose.Types.ObjectId;
   user: mongoose.Types.ObjectId;
   items: [
@@ -63,10 +63,10 @@ export interface IOrder {
   createdAt?: Date;
   updatedAt?: Date;
 }
-const AdminOrderCard = ({ order }: { order: IOrder }) => {
+const AdminOrderCard = ({ order }: { order: IOrderAdmin }) => {
   const [expended, setExpended] = React.useState(false);
   const statusOptions = ["pending", "out of delivery"];
-  const [status, setStatus] = useState<string>(order?.status);
+  const [status, setStatus] = useState<string>("pending");
   /*=============== status updated here ================*/
   const updateStatus = async (orderId: string, status: string) => {
     try {
@@ -80,6 +80,10 @@ const AdminOrderCard = ({ order }: { order: IOrder }) => {
       console.log(error);
     }
   };
+  /*=========== order status change here========== */
+  useEffect(() => {
+    setStatus(order?.status);
+  }, [order]);
   return (
     <motion.div
       key={order?._id?.toString()}

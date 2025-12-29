@@ -60,7 +60,7 @@ const MyOrders = () => {
                 transition={{ duration: 0.4 }}
                 key={index}
               >
-                <UserOrderCard order={order} />
+                <UserOrderCard order={order as any} />
               </motion.div>
             ))}
           </div>

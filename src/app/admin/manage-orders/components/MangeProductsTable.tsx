@@ -2,11 +2,10 @@
 
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { IOrder } from "@/models/order.model";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { LeafIcon } from "lucide-react";
-import AdminOrderCard from "@/components/Admin/AdminOrderCard";
+import AdminOrderCard, { IOrder } from "@/components/Admin/AdminOrderCard";
 import { getSocket } from "@/lib/socket";
 const MangeProductsTable = () => {
   const router = useRouter();

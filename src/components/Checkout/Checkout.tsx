@@ -191,7 +191,7 @@ const Checkout = () => {
     try {
       const res = await axios.post("/api/user/payment", {
         userId: userData?._id,
-        items: cartData.map((i) => ({
+        items: cartData.map((i: any) => ({
           grocery: i._id,
           name: i.name,
           price: i.price,
