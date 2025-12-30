@@ -119,11 +119,13 @@ const Checkout = () => {
         );
         setAddress((prev) => ({
           ...prev,
-          fullAddress: res.data.display_name,
-          city: res.data.address.city || res.data.address.town || "",
+          fullAddress: res?.data?.display_name,
+          city: res?.data?.address?.city || res?.data?.address?.town || "",
           state:
-            res.data.address.state_district || res.data.address.state || "",
-          pincode: res.data.address.postcode || "",
+            res.data?.address?.state_district ||
+            res?.data?.address?.state ||
+            "",
+          pincode: res?.data?.address?.postcode || "",
         }));
         // console.log(res.data);
       } catch (error) {
@@ -170,8 +172,8 @@ const Checkout = () => {
           state: address.state,
           pincode: address.pincode || "",
           fullAddress: address.fullAddress,
-          latitude: position[0],
-          longitude: position[1],
+          latitude: position[1],
+          longitude: position[0],
         },
         paymentMethod,
       });
@@ -207,8 +209,8 @@ const Checkout = () => {
           state: address.state,
           pincode: address.pincode || "",
           fullAddress: address.fullAddress,
-          latitude: position[0],
-          longitude: position[1],
+          latitude: position[1],
+          longitude: position[0],
         },
         paymentMethod,
       });

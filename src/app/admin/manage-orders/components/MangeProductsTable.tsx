@@ -5,11 +5,12 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { LeafIcon } from "lucide-react";
-import AdminOrderCard, { IOrder } from "@/components/Admin/AdminOrderCard";
+import AdminOrderCard, { IOrderAdmin } from "@/components/Admin/AdminOrderCard";
 import { getSocket } from "@/lib/socket";
+// import { IOrder } from "@/models/order.model";
 const MangeProductsTable = () => {
   const router = useRouter();
-  const [orders, setOrders] = useState<IOrder[]>([]);
+  const [orders, setOrders] = useState<IOrderAdmin[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -18,6 +19,7 @@ const MangeProductsTable = () => {
       try {
         const res = await axios.get("/api/admin/manage-orders");
         setLoading(false);
+        console.log(res.data);
         setOrders(res.data);
       } catch (error) {
         console.error("Failed to fetch products:", error);

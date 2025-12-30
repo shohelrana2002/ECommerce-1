@@ -28,6 +28,7 @@ const DeliveryBoyDashboard = () => {
   const assignmentsFetch = async () => {
     try {
       const { data } = await axios.get("/api/delivery/get-assignments");
+      console.log(data);
       setAssignments(data);
     } catch (error) {
       console.log(error);
@@ -44,13 +45,13 @@ const DeliveryBoyDashboard = () => {
         const lat = pos?.coords?.latitude;
         const lon = pos?.coords?.longitude;
         setDeliveryBoyLocation({
+          longitude: lon, // dat base a vul neo jon error
           latitude: lat,
-          longitude: lon,
         });
         socket.emit("update-location", {
           userId: userData?._id,
-          latitude: lat,
           longitude: lon,
+          latitude: lat, // dat base a vul neo jon error
         });
       },
       (error: any) => {
@@ -64,7 +65,12 @@ const DeliveryBoyDashboard = () => {
   useEffect((): any => {
     const socket = getSocket();
     socket.on("new-assignment", (deliveryAssignment) => {
-      setAssignments((prev) => [...prev, deliveryAssignment]);
+      // setAssignments((prev) => [...prev, deliveryAssignment]);
+      setAssignments((prev) =>
+        Array.isArray(prev)
+          ? [...prev, deliveryAssignment]
+          : [deliveryAssignment]
+      );
     });
     return () => socket.off("new-assignment");
   }, []);
@@ -74,7 +80,7 @@ const DeliveryBoyDashboard = () => {
       const result = await axios.get(
         `/api/delivery/assignment/${id}/accept-assignment`
       );
-      console.log(result);
+      // console.log(result);
     } catch (error) {
       console.log(error);
     }
@@ -84,11 +90,11 @@ const DeliveryBoyDashboard = () => {
     try {
       const { data } = await axios.get("/api/delivery/current-order");
       if (data?.active) {
-        console.log(data?.assignment?.order?.address);
+        // console.log(data?.assignment?.order?.address);
         setActiveOrder(data?.assignment);
         setUserLocation({
-          latitude: data?.assignment?.order?.address?.latitude,
-          longitude: data?.assignment?.order?.address?.longitude,
+          latitude: data?.assignment?.order?.address?.longitude,
+          longitude: data?.assignment?.order?.address?.latitude,
         });
       }
     } catch (error) {

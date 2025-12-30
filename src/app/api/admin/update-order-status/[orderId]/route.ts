@@ -85,8 +85,8 @@ export async function POST(
         id: b._id,
         mobile: b.mobile,
         name: b.name,
-        longitude: b.location?.coordinates?.[0] ?? null,
-        latitude: b.location?.coordinates?.[1] ?? null,
+        longitude: b.location?.coordinates?.[1] ?? null,
+        latitude: b.location?.coordinates?.[0] ?? null,
       }));
 
       await deliveryAssignment.populate("order");

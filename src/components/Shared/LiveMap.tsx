@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 interface ILocation {
   latitude: number;
   longitude: number;
@@ -15,8 +15,25 @@ import {
   Polyline,
   Popup,
   TileLayer,
+  useMap,
 } from "react-leaflet";
 import L, { LatLngExpression } from "leaflet";
+
+/*================= live map center a =============== */
+
+function Recenter({ position }: { position: [number, number] }) {
+  const map = useMap();
+  useEffect(() => {
+    if (position[0] !== 0 && position[1] !== 0) {
+      map.setView(position, map.getZoom(), {
+        animate: true,
+      });
+    }
+  }, [position, map]);
+
+  return null;
+}
+
 const LiveMap = ({ userLocation, deliveryBoyLocation }: IProps) => {
   const deliveryBoyIcon = L.icon({
     iconUrl: "https://cdn-icons-png.flaticon.com/128/9561/9561688.png",
@@ -42,6 +59,8 @@ const LiveMap = ({ userLocation, deliveryBoyLocation }: IProps) => {
         zoom={13}
         scrollWheelZoom={true}
       >
+        {/* ========== center  to map ========== */}
+        {/* <Recenter position={center as any} /> */}
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
