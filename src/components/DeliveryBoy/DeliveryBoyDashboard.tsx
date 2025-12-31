@@ -7,6 +7,8 @@ import { MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import LiveMap from "../Shared/LiveMap";
+import DeliveryChat from "./DeliveryChat";
+import mongoose from "mongoose";
 interface ILocation {
   latitude: number;
   longitude: number;
@@ -127,6 +129,10 @@ const DeliveryBoyDashboard = () => {
               deliveryBoyLocation={deliveryBoyLocation}
             />
           </div>
+          <DeliveryChat
+            orderId={activeOrder?.order?._id}
+            deliveryBoyId={userData?._id as unknown as mongoose.Types.ObjectId}
+          />
         </div>
       </div>
     );
