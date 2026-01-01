@@ -5,7 +5,7 @@ import LiveMap from "@/components/Shared/LiveMap";
 import { getSocket } from "@/lib/socket";
 import { RootState } from "@/redux/store";
 import axios from "axios";
-import { ArrowLeft, Phone } from "lucide-react";
+import { ArrowLeft, Loader, Phone, Sparkle } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
@@ -13,6 +13,7 @@ import { IMessage } from "@/models/message.model";
 import { Send } from "lucide-react";
 import mongoose from "mongoose";
 import { motion, AnimatePresence } from "motion/react";
+import { toast } from "react-toastify";
 type props = {
   orderId: mongoose.Types.ObjectId;
   deliveryBoyId: mongoose.Types.ObjectId;
@@ -32,6 +33,8 @@ const TrackOrderPage = () => {
   const [deliveryBoyLocation, setDeliveryBoyLocation] =
     useState<ILocation | null>(null);
 
+  const [suggestions, setSuggestions] = useState([]);
+  const [loading, setLoading] = useState(false);
   /* ================= FETCH ORDER ================= */
   useEffect(() => {
     if (!orderId) return;
@@ -133,6 +136,25 @@ const TrackOrderPage = () => {
       behavior: "smooth",
     });
   }, [messages]);
+
+  /*==================== Delivery Chat AI Api  CAll Here ============= */
+  const getSuggestion = async () => {
+    setLoading(true);
+    try {
+      const lastMessage = messages
+        ?.filter((m) => m?.senderId !== (userData?._id as any))
+        ?.at(-1);
+      const { data } = await axios.post("/api/chat/ai-suggestions", {
+        message: lastMessage?.text,
+        role: "user",
+      });
+      setSuggestions(data);
+      setLoading(false);
+    } catch (error: any) {
+      toast.error(error?.message || "Ai Suggestions Error");
+      setLoading(false);
+    }
+  };
   return (
     <div className="min-h-screen bg-linear-to-b from-green-200/70 to-green-50">
       {/* ================= HEADER ================= */}
@@ -195,6 +217,82 @@ const TrackOrderPage = () => {
           <>
             {/* =========== Message Section here ============ */}
             <div className="bg-white rounded-3xl shadow-xl border flex flex-col h-[360px] sm:h-[420px]">
+              {/* ============== AI Suggestions Header ============== */}
+              <div className="flex items-center p-2 justify-between mb-4">
+                {/* Left title */}
+                <div className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center">
+                    <Sparkle className="h-4 w-4 text-emerald-600" />
+                  </div>
+                  <span className="text-sm font-semibold text-gray-700">
+                    Quick Responses
+                  </span>
+                </div>
+                <motion.button
+                  onClick={getSuggestion}
+                  disabled={loading}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  whileHover={{
+                    scale: 1.02,
+                    boxShadow: "0 0 18px rgba(16, 185, 129, 0.6)",
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  className=" relative overflow-hidden cursor-pointer flex items-center gap-2 px-4 py-1.5 rounded-full bg-linear-to-r from-emerald-500 to-green-600 text-white text-xs font-bold shadow-md "
+                >
+                  {/* ✨ Shimmer animation */}
+                  <motion.span
+                    className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent"
+                    initial={{ x: "-100%" }}
+                    animate={{ x: "100%" }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 2.5,
+                      ease: "linear",
+                    }}
+                  />
+
+                  {/* ✨ Icon pulse */}
+                  <motion.span
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ repeat: Infinity, duration: 1.8 }}
+                  >
+                    <Sparkle className="h-3.5 w-3.5" />
+                  </motion.span>
+
+                  <span className="relative z-10">
+                    {loading ? (
+                      <Loader size={18} className="animate-spin" />
+                    ) : (
+                      "AI Suggest"
+                    )}
+                  </span>
+                </motion.button>
+              </div>
+              {/* ========= AI Suggestions Message ========= */}
+              <div className="flex flex-wrap gap-2 mb-3">
+                {suggestions?.map((s, i) => (
+                  <motion.button
+                    key={i}
+                    initial={{ opacity: 0, scale: 0.85, y: 6 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    whileHover={{
+                      scale: 1.01,
+                      backgroundColor: "#10b981",
+                      color: "#ffffff",
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ duration: 0.25, delay: i * 0.05 }}
+                    className="
+        px-3 py-1.5   rounded-full text-xs font-semibold   border border-emerald-200  bg-emerald-50 text-emerald-700  cursor-pointer shadow-sm hover:shadow-md transition "
+                    onClick={() => setNewMessage(s)}
+                  >
+                    {s}
+                  </motion.button>
+                ))}
+              </div>
+
               {/* ================= MESSAGES ================= */}
               <div
                 className="flex-1 overflow-y-auto px-3 py-4 space-y-3 chat-scroll"
