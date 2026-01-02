@@ -104,6 +104,20 @@ const DeliveryBoyDashboard = () => {
     }
   };
 
+  /*=============== fetch current location dil_eo hab_e na dil_e hab_e ========= */
+  useEffect((): any => {
+    const socket = getSocket();
+    socket.on("update-deliveryBoy-location", ({ userId, location }) => {
+      setDeliveryBoyLocation({
+        latitude: location?.coordinates[1],
+        longitude: location?.coordinates[0],
+      });
+    });
+    return () => {
+      socket.off("update-deliveryBoy-location");
+    };
+  }, []);
+
   useEffect(() => {
     assignmentsFetch();
     fetchCurrentOrder();
@@ -146,7 +160,7 @@ const DeliveryBoyDashboard = () => {
         {assignments?.length > 0 ? (
           assignments.map((data, index) => (
             <div
-              className="p-5 bg-white rounded-xl shadow mb-4 border"
+              className="p-5 bg-white  rounded-xl shadow mb-4 border"
               key={index}
             >
               <p>
