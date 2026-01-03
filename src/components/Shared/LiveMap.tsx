@@ -52,7 +52,7 @@ const LiveMap = ({ userLocation, deliveryBoyLocation }: IProps) => {
       : [];
   const center = [userLocation?.latitude, userLocation?.longitude];
   return (
-    <div className="w-full h-[500px] rounded-xl  overflow-hidden relative">
+    <div className="w-full z-10  h-[500px] rounded-xl  overflow-hidden relative">
       <MapContainer
         className="w-full h-full"
         center={center as LatLngExpression | undefined}

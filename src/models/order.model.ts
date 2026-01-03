@@ -32,6 +32,9 @@ export interface IOrder {
   assignedDeliveryBoy?: mongoose.Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
+  deliveryOtp: string | null;
+  deliveryOtpVerification: boolean;
+  deliveredAt: Date;
 }
 const addressSchema = new Schema(
   {
@@ -103,6 +106,17 @@ const orderSchema = new Schema<IOrder>(
     assignedDeliveryBoy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+    },
+    deliveryOtp: {
+      type: String,
+      default: null,
+    },
+    deliveryOtpVerification: {
+      type: Boolean,
+      default: false,
+    },
+    deliveredAt: {
+      type: Date,
     },
   },
   { timestamps: true }
