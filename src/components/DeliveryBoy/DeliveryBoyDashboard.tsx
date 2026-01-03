@@ -3,12 +3,13 @@
 import { getSocket } from "@/lib/socket";
 import { RootState } from "@/redux/store";
 import axios from "axios";
-import { MapPin } from "lucide-react";
+import { Loader, MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import LiveMap from "../Shared/LiveMap";
 import DeliveryChat from "./DeliveryChat";
 import mongoose from "mongoose";
+import { toast } from "react-toastify";
 interface ILocation {
   latitude: number;
   longitude: number;
@@ -25,7 +26,10 @@ const DeliveryBoyDashboard = () => {
     latitude: 0,
     longitude: 0,
   });
-
+  const [showOtpBox, setShowOtpBox] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpSendLoading, setSendOtpLoading] = useState(false);
+  const [error, setError] = useState("");
   /*=============assignments fetch here======== */
   const assignmentsFetch = async () => {
     try {
@@ -122,6 +126,45 @@ const DeliveryBoyDashboard = () => {
     assignmentsFetch();
     fetchCurrentOrder();
   }, [userData]);
+
+  /*=========== Send Otp Call here======== */
+
+  const otpSend = async () => {
+    setSendOtpLoading(true);
+    try {
+      const data = await axios.post("/api/delivery/otp/send", {
+        orderId: activeOrder?.order?._id,
+      });
+      console.log(data);
+      if (data?.status === 200 || data?.status === 201) {
+        setShowOtpBox(true);
+        setSendOtpLoading(false);
+        toast.success(data?.data?.message || "Delivery Otp Send Success");
+      }
+    } catch (error) {
+      console.log(error);
+      setSendOtpLoading(false);
+    }
+  };
+  const verifyOtp = async () => {
+    setSendOtpLoading(true);
+    try {
+      const data = await axios.post("/api/delivery/otp/verify", {
+        orderId: activeOrder?.order?._id,
+        otp,
+      });
+      if (data?.status === 200 || data?.status === 201) {
+        setError("");
+        setActiveOrder(null);
+        setSendOtpLoading(false);
+        await fetchCurrentOrder();
+        toast.success(data?.data?.message || "Verify Otp Success");
+      }
+    } catch (error: any) {
+      setError(error.response?.data?.message || "Failed to Verify OTP");
+      setSendOtpLoading(false);
+    }
+  };
   /*================== location or curet delivery tha_kle eta dek_kh_be========== */
   if (activeOrder && userLocation) {
     return (
@@ -147,6 +190,50 @@ const DeliveryBoyDashboard = () => {
             orderId={activeOrder?.order?._id}
             deliveryBoyId={userData?._id as unknown as mongoose.Types.ObjectId}
           />
+          {/* ========= Delivery Bookmarked Button ======= */}
+          <div className="mt-6 bg-white text-xl rounded-lg mb-4  border shadow p-6">
+            {!activeOrder?.order?.deliveryOtpVerification && !showOtpBox && (
+              <button
+                disabled={otpSendLoading}
+                onClick={otpSend}
+                className="w-full mt-1 flex justify-center items-center p-2 mx-auto text-center hover:bg-primary/90 cursor-pointer  bg-primary  text-white rounded-2xl"
+              >
+                {otpSendLoading ? (
+                  <Loader className="animate-spin" />
+                ) : (
+                  "Mark as Delivered"
+                )}
+              </button>
+            )}
+            {/* ========== otp input filed ====== */}
+            {showOtpBox && (
+              <div className="mt-2">
+                <input
+                  type="text"
+                  className="w-full py-3  border rounded-lg text-center"
+                  placeholder="Enter otp"
+                  minLength={6}
+                  onChange={(e) => setOtp(e.target.value)}
+                  maxLength={6}
+                />
+                {error && <p className="text-red-600">{error}</p>}
+                <button
+                  disabled={otpSendLoading}
+                  onClick={verifyOtp}
+                  className="w-full flex mt-2 justify-center items-center p-2 mx-auto text-center hover:bg-primary/90 cursor-pointer  bg-primary  text-white rounded-2xl"
+                >
+                  {otpSendLoading ? (
+                    <Loader className="animate-spin" />
+                  ) : (
+                    "Verify OTP"
+                  )}
+                </button>
+              </div>
+            )}
+            {activeOrder?.order?.deliveryOtpVerification && (
+              <div className="text-center text-primary font-bold">Delivery</div>
+            )}
+          </div>
         </div>
       </div>
     );

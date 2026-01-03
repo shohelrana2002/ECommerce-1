@@ -18,7 +18,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "Order not found" }, { status: 400 });
     }
     if (order?.deliveryOtp !== otp) {
-      return NextResponse.json({ message: "incorrect Otp" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Incorrect Otp Verify" },
+        { status: 400 }
+      );
     }
     (order.status = "delivered"),
       (order.deliveryOtpVerification = true),
