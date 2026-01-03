@@ -83,10 +83,8 @@ const DeliveryBoyDashboard = () => {
   /*================ accepted order handle here=============== */
   const handleAccepted = async (id: string) => {
     try {
-      const result = await axios.get(
-        `/api/delivery/assignment/${id}/accept-assignment`
-      );
-      // console.log(result);
+      await axios.get(`/api/delivery/assignment/${id}/accept-assignment`);
+      fetchCurrentOrder();
     } catch (error) {
       console.log(error);
     }
@@ -156,6 +154,9 @@ const DeliveryBoyDashboard = () => {
       if (data?.status === 200 || data?.status === 201) {
         setError("");
         setActiveOrder(null);
+        setAssignments((prev) =>
+          prev.filter((a) => a?.order?._id !== activeOrder?.order?._id)
+        );
         setSendOtpLoading(false);
         await fetchCurrentOrder();
         toast.success(data?.data?.message || "Verify Otp Success");

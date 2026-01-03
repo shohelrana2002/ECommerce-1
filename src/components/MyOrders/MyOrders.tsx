@@ -1,13 +1,15 @@
 "use client";
-import { IOrder } from "@/models/order.model";
+// import { IOrder } from "@/models/order.model";
 import axios from "axios";
 import { ArrowLeft, Package } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import UserOrderCard from "./UserOrderCard";
+import { getSocket } from "@/lib/socket";
+import { IOrderAdmin } from "../Admin/AdminOrderCard";
 const MyOrders = () => {
-  const [orders, setOrders] = useState<IOrder[]>();
+  const [orders, setOrders] = useState<IOrderAdmin[]>();
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   useEffect(() => {
@@ -22,7 +24,19 @@ const MyOrders = () => {
     };
     getOrders();
   }, []);
-
+  useEffect(() => {
+    const socket = getSocket();
+    socket.on("order-assigned", ({ orderId, assignedDeliveryBoy }) => {
+      setOrders((prev) =>
+        prev?.map((o) =>
+          o?._id == orderId ? { ...o, assignedDeliveryBoy } : o
+        )
+      );
+    });
+    return () => {
+      socket.off("order-assigned");
+    };
+  }, []);
   if (loading)
     return (
       <div className="min-h-[50vh] flex justify-center items-center text-gray-600">
@@ -53,14 +67,14 @@ const MyOrders = () => {
           </div>
         ) : (
           <div className="mt-6 space-y-6">
-            {orders?.map((order: IOrder, index: number) => (
+            {orders?.map((order: IOrderAdmin, index: number) => (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
                 key={index}
               >
-                <UserOrderCard order={order as any} />
+                <UserOrderCard order={order} />
               </motion.div>
             ))}
           </div>

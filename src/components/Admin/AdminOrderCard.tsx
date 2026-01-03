@@ -1,4 +1,5 @@
 "use client";
+import { getSocket } from "@/lib/socket";
 import { IUser } from "@/models/user.model";
 import axios from "axios";
 import {
@@ -84,6 +85,19 @@ const AdminOrderCard = ({ order }: { order: IOrderAdmin }) => {
   useEffect(() => {
     setStatus(order?.status);
   }, [order]);
+  /*=======called api socket ==========*/
+  useEffect(() => {
+    const socket = getSocket();
+    socket.on("order-status-update", (data) => {
+      //status change na hole toString a convert kor_te ha_be
+      if (data?.orderId?.toString() == order?._id?.toString()) {
+        setStatus(data?.status);
+      }
+    });
+    return () => {
+      socket.off("order-status-update");
+    };
+  }, []);
   return (
     <motion.div
       key={order?._id?.toString()}
@@ -96,15 +110,18 @@ const AdminOrderCard = ({ order }: { order: IOrderAdmin }) => {
           <p className="text-lg font-bold gap-2 text-primary flex items-center">
             <Package size={20} /> Order #{order?._id?.toString().slice(-6)}
           </p>
-          <span
-            className={`inline-block text-xs font-semibold px-3 py-1 rounded-full border ${
-              order?.isPaid
-                ? "bg-green-100 text-primary border-green-300"
-                : "bg-red-100 text-red-800 border-red-300"
-            }`}
-          >
-            {order?.isPaid ? "Paid" : "Not Paid"}
-          </span>
+          {status !== "delivered" && (
+            <span
+              className={`inline-block text-xs font-semibold px-3 py-1 rounded-full border ${
+                order?.isPaid
+                  ? "bg-green-100 text-primary border-green-300"
+                  : "bg-red-100 text-red-800 border-red-300"
+              }`}
+            >
+              {order?.isPaid ? "Paid" : "Not Paid"}
+            </span>
+          )}
+
           <p className="text-gray-500 text-sm">
             {new Date(order?.createdAt || "").toLocaleString()}
           </p>
@@ -182,13 +199,7 @@ const AdminOrderCard = ({ order }: { order: IOrderAdmin }) => {
           >
             {status}
           </span>
-          {order?.status === "delivered" ? (
-            <span>
-              {/* className={`px-3 py-1 text-xs capitalize font-semibold border rounded ${statusColor(
-                order?.status
-              )} `} */}
-            </span>
-          ) : (
+          {status !== "delivered" && (
             <select
               onChange={(e) =>
                 updateStatus(order?._id?.toString()!, e.target.value)

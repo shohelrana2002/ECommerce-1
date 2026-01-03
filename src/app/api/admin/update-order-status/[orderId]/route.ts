@@ -33,7 +33,7 @@ export async function POST(
               type: "Point",
               coordinates: [Number(latitude), Number(longitude)],
             },
-            $maxDistance: 10000, //10km distance
+            $maxDistance: 100000, //10km distance ==== 0 extra
           },
         },
       });
