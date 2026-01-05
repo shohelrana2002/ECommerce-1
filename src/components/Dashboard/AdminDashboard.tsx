@@ -38,6 +38,17 @@ export default async function AdminDashboard() {
     (sum, order) => sum + (order?.totalAmount || 0),
     0
   );
+
+  const stats = [
+    { title: "Total Orders", value: totalOrders },
+    { title: "Total Customers", value: totalCustomers },
+    { title: "Pending Deliveries", value: pendingDelivery },
+    { title: "Total Revenue", value: totalRevenue },
+  ];
+  const chartData = [];
+  for (let i = 6; i >=0; i--) {
+    // kk
+  }
   return (
     <>
       <AdminDashboardClient
@@ -46,6 +57,7 @@ export default async function AdminDashboard() {
           sevenDays: sevenDaysRevenue,
           total: totalRevenue,
         }}
+        stats={stats}
       />
     </>
   );

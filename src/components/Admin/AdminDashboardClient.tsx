@@ -1,4 +1,5 @@
 "use client";
+import { Banknote, Package, Truck, Users } from "lucide-react";
 import { motion } from "motion/react";
 import React, { useState } from "react";
 type propTypes = {
@@ -7,8 +8,13 @@ type propTypes = {
     sevenDays: number;
     total: number;
   };
+  stats: {
+    title: string;
+    value: number;
+  }[];
 };
-const AdminDashboardClient = ({ earning }: propTypes) => {
+
+const AdminDashboardClient = ({ earning, stats }: propTypes) => {
   const [filter, setFilter] = useState<"today" | "sevenDays" | "total">();
   const currentEarning =
     filter === "today"
@@ -56,6 +62,33 @@ const AdminDashboardClient = ({ earning }: propTypes) => {
           ৳{currentEarning.toString()}
         </p>
       </motion.div>
+      {/* ===== show Here  Chat ============ */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6  mb-10 ">
+        {stats?.map((s, i) => {
+          const icons = [
+            <Package className="text-primary w-6 h-6" />,
+            <Users className="text-primary w-6 h-6" />,
+            <Truck className="text-primary w-6 h-6" />,
+            <span className="text-primary font-extrabold w-6 h-6">৳</span>,
+            // <Banknote className="text-primary w-6 h-6" />,
+          ];
+          return (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 1 }}
+              className="bg-white border border-gray-100 shadow-md rounded-2xl p-5  flex items-center gap-4  hover:shadow-lg transition-all duration-300"
+              key={i}
+            >
+              <div className="bg-green-100 p-3 rounded-xl ">{icons[i]}</div>
+              <div>
+                <p>{s?.title}</p>
+                <p>{s?.value}</p>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
     </div>
   );
 };
