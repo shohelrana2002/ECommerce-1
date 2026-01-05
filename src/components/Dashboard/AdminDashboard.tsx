@@ -46,8 +46,20 @@ export default async function AdminDashboard() {
     { title: "Total Revenue", value: totalRevenue },
   ];
   const chartData = [];
-  for (let i = 6; i >=0; i--) {
-    // kk
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    date.setHours(0, 0, 0, 0);
+    const nextDay = new Date(date);
+    nextDay.setDate(nextDay.getDay() + 1);
+
+    const ordersCount = orders?.filter(
+      (o) => new Date(o?.createdAt) >= date && new Date(o?.createdAt) < nextDay
+    )?.length;
+    chartData.push({
+      day: date.toLocaleDateString("en-us", { weekday: "short" }),
+      orders: ordersCount,
+    });
   }
   return (
     <>
@@ -58,6 +70,7 @@ export default async function AdminDashboard() {
           total: totalRevenue,
         }}
         stats={stats}
+        chartData={chartData}
       />
     </>
   );

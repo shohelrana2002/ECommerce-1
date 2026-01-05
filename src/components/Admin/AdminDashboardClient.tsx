@@ -2,6 +2,17 @@
 import { Banknote, Package, Truck, Users } from "lucide-react";
 import { motion } from "motion/react";
 import React, { useState } from "react";
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  BarChart,
+  Bar,
+} from "recharts";
 type propTypes = {
   earning: {
     today: number;
@@ -12,9 +23,13 @@ type propTypes = {
     title: string;
     value: number;
   }[];
+  chartData: {
+    day: string;
+    orders: number;
+  }[];
 };
 
-const AdminDashboardClient = ({ earning, stats }: propTypes) => {
+const AdminDashboardClient = ({ earning, stats, chartData }: propTypes) => {
   const [filter, setFilter] = useState<"today" | "sevenDays" | "total">();
   const currentEarning =
     filter === "today"
@@ -88,6 +103,28 @@ const AdminDashboardClient = ({ earning, stats }: propTypes) => {
             </motion.div>
           );
         })}
+      </div>
+      {/* ==== Chart Show ========= */}
+      <div className="bg-white border border-gray-100 rounded-2xl shadow-md p-5 mb-10">
+        <h2 className="text-lg font-bold text-gray-700 mb-4">
+          📊 Orders Overview (Last 7 Day's)
+        </h2>
+
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={chartData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="day" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey={"orders"} fill="#16A34A" radius={[6, 6, 0, 0]} />
+            <Line
+              type="monotone"
+              dataKey="orders"
+              stroke="#16a34a"
+              strokeWidth={3}
+            />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );
