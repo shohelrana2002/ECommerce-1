@@ -32,7 +32,9 @@ const ViewGrocery = () => {
   const [editing, setEditing] = useState<IGrocery | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [backedImage, setBackendImage] = useState<Blob | null>(null);
+  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
+  /*===== Get Product All === */
   useEffect(() => {
     const getGroceries = async () => {
       try {
@@ -117,6 +119,12 @@ const ViewGrocery = () => {
       console.log(error);
     }
   };
+  const filteredGroceries = groceries.filter(
+    (g) =>
+      g.name.toLowerCase().includes(search.toLowerCase()) ||
+      g.category.toLowerCase().includes(search.toLowerCase()) ||
+      g.price.toLowerCase().includes(search.toLowerCase())
+  );
   return (
     <div className="relative pt-6  pb-10 w-[95%] md:w-[85%] mx-auto bg-linear-to-br from-green-100 via-green-50 to-white rounded-3xl shadow-sm">
       {/* Header Row */}
@@ -163,7 +171,9 @@ const ViewGrocery = () => {
           />
           <input
             type="text"
-            placeholder="Search orders..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search By Name Category Price.."
             className="w-full pl-10 pr-4 py-2 rounded-2xl
           border border-green-200 bg-white/80
           focus:outline-none focus:ring-2 focus:ring-green-400
@@ -173,7 +183,7 @@ const ViewGrocery = () => {
       </div>
       {/* === Groceries == */}
       <div className="space-y-4 mt-12">
-        {groceries?.map((g, i) => (
+        {filteredGroceries?.map((g, i) => (
           <motion.div
             className="bg-white rounded-2xl shadow-md hover:shadow-xl  border border-gray-100 flex flex-col sm:flex-row  gap-5 p-5 transition-all"
             whileHover={{ scale: 1.0099 }}
