@@ -118,7 +118,7 @@ export default function Navbar({ user }: { user: IUser }) {
               </Link>
 
               <Link
-                href="/"
+                href="/admin/view-grocery"
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center gap-3 p-3 rounded-xl 
                 bg-white/10 hover:bg-blue-500/30 transition-all
@@ -227,7 +227,7 @@ export default function Navbar({ user }: { user: IUser }) {
               </Link>
 
               <Link
-                href="/"
+                href="/admin/view-grocery"
                 className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-100 text-blue-700 hover:bg-blue-600 hover:text-white transition font-medium"
               >
                 <Eye size={18} />

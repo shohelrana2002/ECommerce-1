@@ -165,7 +165,7 @@ export default function AddProductsPage() {
                 focus:ring-green-400 shadow-sm bg-white cursor-pointer"
               required
             >
-              <option value="">Select Unit</option>
+              <option disabled={true}>Select Unit</option>
               <option value="kg">Kilogram (kg)</option>
               <option value="g">Gram (g)</option>
               <option value="liter">Liter (L)</option>
