@@ -10,11 +10,21 @@ import LiveMap from "../Shared/LiveMap";
 import DeliveryChat from "./DeliveryChat";
 import mongoose from "mongoose";
 import { toast } from "react-toastify";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 interface ILocation {
   latitude: number;
   longitude: number;
 }
-const DeliveryBoyDashboard = () => {
+const DeliveryBoyDashboard = ({ earning }: { earning: number }) => {
   const [assignments, setAssignments] = useState<any[]>([]);
   const { userData } = useSelector((state: RootState) => state.user);
   const [activeOrder, setActiveOrder] = useState<any>(null);
@@ -34,8 +44,9 @@ const DeliveryBoyDashboard = () => {
   const assignmentsFetch = async () => {
     try {
       const { data } = await axios.get("/api/delivery/get-assignments");
-      console.log(data);
-      setAssignments(data);
+      // console.log(data);
+      // setAssignments(data);
+      setAssignments(Array.isArray(data?.assignments) ? data.assignments : []);
     } catch (error) {
       console.log(error);
     }
@@ -102,7 +113,7 @@ const DeliveryBoyDashboard = () => {
         });
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
@@ -133,7 +144,7 @@ const DeliveryBoyDashboard = () => {
       const data = await axios.post("/api/delivery/otp/send", {
         orderId: activeOrder?.order?._id,
       });
-      console.log(data);
+      // console.log(data);
       if (data?.status === 200 || data?.status === 201) {
         setShowOtpBox(true);
         setSendOtpLoading(false);
@@ -166,6 +177,80 @@ const DeliveryBoyDashboard = () => {
       setSendOtpLoading(false);
     }
   };
+
+  /*========== Shop Graph ===== */
+  if (!activeOrder && Array.isArray(assignments) && assignments.length === 0) {
+    const todayEarning = [{ name: "Today", earning, deliveries: earning / 40 }];
+
+    return (
+      <div className="min-h-screen mt-22  flex items-center justify-center bg-linear-to-br from-green-50 via-white to-green-100 px-4">
+        <div className="w-full max-w-lg">
+          {/* Empty State */}
+          <div className="text-center mb-6">
+            <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-green-100 text-4xl">
+              🚛
+            </div>
+            <h3 className="text-2xl font-extrabold text-gray-800">
+              No Active Deliveries
+            </h3>
+            <p className="text-gray-500 mt-1">
+              Stay online to receive new orders
+            </p>
+          </div>
+
+          {/* Performance Card */}
+          <div className="bg-white rounded-2xl border shadow-lg p-5 sm:p-6">
+            <h2 className="text-center text-lg font-semibold text-green-700 mb-4">
+              📊 Today&apos;s Performance
+            </h2>
+
+            <div className="w-full h-64 sm:h-72">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={todayEarning}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+
+                  <Bar
+                    dataKey="earning"
+                    name="Earning (৳)"
+                    fill="#16A34A"
+                    radius={[8, 8, 0, 0]}
+                  />
+                  <Bar
+                    dataKey="deliveries"
+                    name="Deliveries"
+                    fill="#2563EB"
+                    radius={[8, 8, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white border shadow-md rounded-2xl p-5">
+                {/* Earning */}
+                <div className="text-center sm:text-left">
+                  <p className="text-sm text-gray-500">Today’s Earning</p>
+                  <p className="text-primary font-extrabold text-2xl md:text-3xl">
+                    ৳ {earning || 0}
+                  </p>
+                </div>
+
+                {/* Refresh Button */}
+                <button
+                  onClick={() => window.location.reload()}
+                  className="flex cursor-pointer items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-white font-semibold hover:bg-green-600 active:scale-95  transition-all shadow-md"
+                >
+                  🔄 Refresh Earning
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   /*================== location or curet delivery tha_kle eta dek_kh_be========== */
   if (activeOrder && userLocation) {
     return (
@@ -245,43 +330,40 @@ const DeliveryBoyDashboard = () => {
     <div className="mt-24 w-full min-h-screen  bg-gray-50 p-4">
       <div className="max-w-3xl mx-auto">
         <h2 className="text-2xl font-bold mb-2">Delivery Assignments </h2>
-        {assignments?.length > 0 ? (
-          assignments.map((data, index) => (
-            <div
-              className="p-5 bg-white  rounded-xl shadow mb-4 border"
-              key={index}
-            >
-              <p>
-                <b>OrderId:</b>
-                <span className="text-primary font-extrabold">
-                  #{data?.order?._id.slice(-8)}
-                </span>
-              </p>
-              <p className="flex items-center">
-                <b>Address:</b>
-                <MapPin size={16} className="text-primary font-bold" />
-                {data?.order?.address?.fullAddress}
-              </p>
-              <div className="flex justify-center gap-x-4 mt-4">
-                <button
-                  onClick={() => handleAccepted(data?._id)}
-                  className="w-full px-6 py-2 bg-primary text-white rounded-full font-semibold 
+
+        {assignments?.map((data, index) => (
+          <div
+            className="p-5 bg-white  rounded-xl shadow mb-4 border"
+            key={index}
+          >
+            <p>
+              <b>OrderId:</b>
+              <span className="text-primary font-extrabold">
+                #{data?.order?._id?.slice(-8)}
+              </span>
+            </p>
+            <p className="flex items-center">
+              <b>Address:</b>
+              <MapPin size={16} className="text-primary font-bold" />
+              {data?.order?.address?.fullAddress}
+            </p>
+            <div className="flex justify-center gap-x-4 mt-4">
+              <button
+                onClick={() => handleAccepted(data?._id)}
+                className="w-full px-6 py-2 bg-primary text-white rounded-full font-semibold 
       hover:bg-green-500 cursor-pointer transition-colors duration-300 shadow-md"
-                >
-                  Accept
-                </button>
-                <button
-                  className="w-full px-6 py-2 cursor-pointer bg-red-800 text-white rounded-full font-semibold 
+              >
+                Accept
+              </button>
+              <button
+                className="w-full px-6 py-2 cursor-pointer bg-red-800 text-white rounded-full font-semibold 
       hover:bg-red-700 transition-colors duration-300 shadow-md"
-                >
-                  Reject
-                </button>
-              </div>
+              >
+                Reject
+              </button>
             </div>
-          ))
-        ) : (
-          <>No Assignment Data</>
-        )}
+          </div>
+        ))}
       </div>
     </div>
   );
