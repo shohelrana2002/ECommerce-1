@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import AdminDashboard from "@/components/Dashboard/AdminDashboard";
 import DeliveryBoyDashboard from "@/components/Dashboard/DeliveryBoyDashboard";
 import UserDashboard from "@/components/Dashboard/UserDashboard";
+import Footer from "@/components/Footer/Footer";
 import GeoUpdater from "@/components/GeoUpdater/GeoUpdater";
 import EditRoleMobile from "@/components/Home/EditRoleMobile";
 import Navbar from "@/components/Shared/Navbar";
@@ -54,6 +55,7 @@ export default async function Home(props: {
       {user?.role === "admin" && <AdminDashboard />}
       {user?.role === "deliveryBoy" && <DeliveryBoyDashboard />}
       {user?.role === "user" && <UserDashboard groceryList={groceryList} />}
+      <Footer />
     </>
   );
 }
