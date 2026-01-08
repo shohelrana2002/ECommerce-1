@@ -6,13 +6,21 @@ import GeoUpdater from "@/components/GeoUpdater/GeoUpdater";
 import EditRoleMobile from "@/components/Home/EditRoleMobile";
 import Navbar from "@/components/Shared/Navbar";
 import connectDB from "@/lib/dbConnect";
+import { Grocery, IGrocery } from "@/models/grocery.model";
 import { User } from "@/models/user.model";
 import { redirect } from "next/navigation";
 
-export default async function Home() {
+export default async function Home(props: {
+  searchParams: Promise<{
+    q: string;
+  }>;
+}) {
+  /*========= Search Query Here ============ */
+  const searchParams = await props?.searchParams;
+
   // get user and find by id
-  const session = await auth();
   await connectDB();
+  const session = await auth();
   const user = await User.findById(session?.user?.id);
   if (!user) {
     redirect("/login");
@@ -24,13 +32,28 @@ export default async function Home() {
     return <EditRoleMobile />;
   }
   const userData = user ? JSON.parse(JSON.stringify(user)) : null;
+
+  let groceryList: any[] = []; // IGrocery
+  if (user?.role === "user") {
+    if (searchParams?.q) {
+      groceryList = await Grocery.find({
+        $or: [
+          { name: { $regex: searchParams?.q || "", $options: "i" } },
+          { category: { $regex: searchParams?.q || "", $options: "i" } },
+          { price: { $regex: searchParams?.q || "", $options: "i" } },
+        ],
+      });
+    } else {
+      groceryList = await Grocery.find({});
+    }
+  }
   return (
     <>
       <Navbar user={userData} />
       <GeoUpdater userId={userData?._id} />
       {user?.role === "admin" && <AdminDashboard />}
       {user?.role === "deliveryBoy" && <DeliveryBoyDashboard />}
-      {user?.role === "user" && <UserDashboard />}
+      {user?.role === "user" && <UserDashboard groceryList={groceryList} />}
     </>
   );
 }

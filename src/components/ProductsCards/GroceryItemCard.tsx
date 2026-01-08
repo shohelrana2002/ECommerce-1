@@ -54,6 +54,7 @@ const GroceryItemCard = ({ item }: { item: IGrocery }) => {
         <p className="text-xs text-gray-400 font-semibold uppercase tracking-wide">
           {item?.category}
         </p>
+        {/* <p>Stock:{item?.stock}</p> */}
         <h3 className="text-lg font-semibold text-gray-800 line-clamp-2">
           {item?.name}
         </h3>
@@ -63,7 +64,9 @@ const GroceryItemCard = ({ item }: { item: IGrocery }) => {
             ৳ {item?.price}
           </span>
         </div>
-
+        {/* <p className="text-gray-800 capitalize  text-xs">
+          {item?.description?.slice(0, 20)}
+        </p> */}
         {cartItem ? (
           <motion.div
             initial={{ opacity: 0, y: 10, scale: 0.99 }}

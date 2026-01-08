@@ -16,18 +16,20 @@ import {
 import { AnimatePresence } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { signOut } from "next-auth/react";
 import { createPortal } from "react-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { useRouter } from "next/navigation";
 
 export default function Navbar({ user }: { user: IUser }) {
   const menuRef = useRef<HTMLDivElement>(null);
-
+  const [search, setSearch] = useState("");
   const [openDropdown, setOpenDropdown] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const router = useRouter();
   const { cartData } = useSelector((state: RootState) => state.cart);
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -39,7 +41,17 @@ export default function Navbar({ user }: { user: IUser }) {
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
-
+  /*== Search function Here=== */
+  const handleSearch = async (e: FormEvent) => {
+    e.preventDefault();
+    const query = search.trim();
+    if (!query) {
+      return router.push("/");
+    }
+    router.push(`/?q=${encodeURIComponent(query)}`);
+    setSearch("");
+    setSearchOpen(false);
+  };
   const sideBar = menuOpen
     ? createPortal(
         <AnimatePresence>
@@ -179,10 +191,18 @@ export default function Navbar({ user }: { user: IUser }) {
       {user?.role === "user" && (
         <>
           {/* center */}
-          <form className="hidden md:flex items-center bg-white rounded-full  px-4 py-2 w-1/2 max-w-lg shadow-md">
-            <SearchIcon className="text-secondary w-5 h-5 mr-2" />
+          <form
+            onSubmit={handleSearch}
+            className="hidden md:flex items-center bg-white rounded-full px-4 py-2 w-1/2 max-w-lg shadow-md"
+          >
+            <button type="submit">
+              <SearchIcon className="text-secondary cursor-pointer w-5 h-5 mr-2" />
+            </button>
+
             <input
               type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Search Grocery...."
               className="w-full outline-none text-secondary placeholder-gray-400"
             />
@@ -347,38 +367,36 @@ export default function Navbar({ user }: { user: IUser }) {
               <AnimatePresence>
                 {searchOpen && (
                   <motion.div
-                    className="fixed top-24 left-1/2 -translate-x-1/2 w-[90%] bg-white
-               rounded-full shadow-lg z-4 flex items-center px-4 py-7
-               "
-                    initial={{
-                      opacity: 0,
-                      y: -10,
-                      scale: 0.95,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      y: 0,
-                      scale: 1,
-                    }}
-                    transition={{
-                      duration: 0.2,
-                      delay: 0.3,
-                    }}
-                    exit={{
-                      opacity: 0,
-                      y: -10,
-                      scale: 0.95,
-                    }}
+                    className="fixed top-24 left-1/2 -translate-x-1/2 w-[90%] max-w-md
+  bg-white rounded-full shadow-lg z-40 flex items-center px-4 py-3"
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
                   >
-                    <SearchIcon className="text-secondary w-5 h-5 mr-2" />
-                    <form className="grow">
+                    <form
+                      onSubmit={handleSearch}
+                      className="flex items-center w-full gap-2"
+                    >
+                      <button type="submit" className="shrink-0 cursor-pointer">
+                        <SearchIcon className="text-secondary w-5 h-5" />
+                      </button>
+
                       <input
                         type="text"
-                        placeholder="Search Grocery...."
-                        className="w-full outline-none text-secondary placeholder-gray-400"
+                        value={search}
+                        autoFocus
+                        onChange={(e) => setSearch(e.target.value)}
+                        placeholder="Search Grocery..."
+                        className="w-full outline-none text-secondary placeholder-gray-400 text-sm"
                       />
                     </form>
-                    <button onClick={() => setSearchOpen(false)}>
+
+                    <button
+                      type="button"
+                      onClick={() => setSearchOpen(false)}
+                      className="ml-2 shrink-0"
+                    >
                       <X className="w-5 h-5 text-secondary" />
                     </button>
                   </motion.div>
