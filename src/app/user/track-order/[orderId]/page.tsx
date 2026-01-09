@@ -11,13 +11,9 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { IMessage } from "@/models/message.model";
 import { Send } from "lucide-react";
-import mongoose from "mongoose";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "react-toastify";
-type props = {
-  orderId: mongoose.Types.ObjectId;
-  deliveryBoyId: mongoose.Types.ObjectId;
-};
+
 interface ILocation {
   latitude: number;
   longitude: number;

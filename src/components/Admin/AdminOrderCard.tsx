@@ -13,7 +13,6 @@ import {
   User,
   UserCheck2,
 } from "lucide-react";
-import mongoose from "mongoose";
 import { motion } from "motion/react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -33,11 +32,11 @@ const statusColor = (status: string) => {
 
 // interface
 export interface IOrderAdmin {
-  _id?: mongoose.Types.ObjectId;
-  user: mongoose.Types.ObjectId;
+  _id?: string;
+  user: string;
   items: [
     {
-      grocery: mongoose.Types.ObjectId;
+      grocery: string;
       name: string;
       price: string;
       unit: string;
@@ -59,7 +58,7 @@ export interface IOrderAdmin {
     longitude: string;
   };
   status: "pending" | "out of delivery" | "delivered";
-  assignment?: mongoose.Types.ObjectId;
+  assignment?: string;
   assignedDeliveryBoy?: IUser;
   createdAt?: Date;
   updatedAt?: Date;

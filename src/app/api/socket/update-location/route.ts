@@ -2,7 +2,7 @@ import connectDB from "@/lib/dbConnect";
 import { User } from "@/models/user.model";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
   try {
     await connectDB();
     const { userId, location } = await req.json();

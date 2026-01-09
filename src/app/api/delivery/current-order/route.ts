@@ -3,7 +3,7 @@ import connectDB from "@/lib/dbConnect";
 import DeliveryAssignment from "@/models/deliveryAssignment.model";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextRequest) {
   try {
     await connectDB();
     /*===========find to current user============== */

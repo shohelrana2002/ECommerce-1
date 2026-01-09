@@ -2,7 +2,7 @@ import connectDB from "@/lib/dbConnect";
 import { User } from "@/models/user.model";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
   try {
     await connectDB();
     const { userId, socketId } = await req.json();
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     );
   }
 }
-export async function DELETE(req: NextRequest, res: NextResponse) {
+export async function DELETE(req: NextRequest) {
   try {
     await connectDB();
     const { userId, socketId } = await req.json();

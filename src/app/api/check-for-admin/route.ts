@@ -1,7 +1,7 @@
 import { User } from "@/models/user.model";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextRequest) {
   try {
     const user = await User.find({
       role: "admin",

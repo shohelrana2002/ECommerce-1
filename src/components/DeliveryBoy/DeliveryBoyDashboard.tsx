@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import LiveMap from "../Shared/LiveMap";
 import DeliveryChat from "./DeliveryChat";
-import mongoose from "mongoose";
 import { toast } from "react-toastify";
 import {
   Bar,
@@ -274,7 +273,7 @@ const DeliveryBoyDashboard = ({ earning }: { earning: number }) => {
           </div>
           <DeliveryChat
             orderId={activeOrder?.order?._id}
-            deliveryBoyId={userData?._id as unknown as mongoose.Types.ObjectId}
+            deliveryBoyId={userData?._id as any}
           />
           {/* ========= Delivery Bookmarked Button ======= */}
           <div className="mt-6 bg-white text-xl rounded-lg mb-4  border shadow p-6">

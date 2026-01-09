@@ -19,16 +19,14 @@ import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import "leaflet/dist/leaflet.css";
-import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
-import L, { LatLngExpression } from "leaflet";
+
 import axios from "axios";
-import { OpenStreetMapProvider } from "leaflet-geosearch";
-const markIcon = new L.Icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/128/9800/9800512.png",
-  iconSize: [40, 40],
-  iconAnchor: [20, 40],
+
+import dynamic from "next/dynamic";
+const CheckoutMap = dynamic(() => import("@/components/Checkout/CheckoutMap"), {
+  ssr: false,
 });
+
 const Checkout = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
@@ -70,34 +68,11 @@ const Checkout = () => {
     }
   }, [userData]);
 
-  const DargAbleMarker: React.FC = () => {
-    const map = useMap();
-    useEffect(() => {
-      map.setView(position as LatLngExpression, 15, { animate: true });
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [position, map]);
-
-    return (
-      <Marker
-        icon={markIcon}
-        position={position as LatLngExpression}
-        draggable={true}
-        eventHandlers={{
-          dragend: (e: L.LeafletEvent) => {
-            const marker = e.target as L.Marker;
-            const { lat, lng } = marker.getLatLng();
-            setPosition([lat, lng]);
-          },
-        }}
-      >
-        <Popup>{/* A pretty CSS3 popup. <br /> Easily customizable. */}</Popup>
-      </Marker>
-    );
-  };
   // search query input here fu
 
   const handleSearchQuery = async () => {
     setSearchLoading(true);
+    const { OpenStreetMapProvider } = await import("leaflet-geosearch");
     const provider = new OpenStreetMapProvider();
     // search
     const result = await provider.search({ query: searchQuery });
@@ -378,18 +353,7 @@ const Checkout = () => {
             <div className="relative mt-6 h-[330px] rounded-xl overflow-hidden border  border-gray-200 shadow-inner">
               {position && (
                 <>
-                  <MapContainer
-                    className="w-full h-full"
-                    center={position as LatLngExpression}
-                    zoom={13}
-                    scrollWheelZoom={true}
-                  >
-                    <TileLayer
-                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    <DargAbleMarker />
-                  </MapContainer>
+                  <CheckoutMap position={position} setPosition={setPosition} />
                   <motion.button
                     onClick={handleCurrentLocation}
                     whileTap={{ scale: 0.95 }}

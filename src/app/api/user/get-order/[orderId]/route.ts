@@ -4,12 +4,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { orderId: string } }
+  context: { params: Promise<{ orderId: string }> }
 ) {
   try {
     await connectDB();
 
-    const { orderId } = await params;
+    const { orderId } = await context.params;
     if (!orderId) {
       return NextResponse.json(
         { message: "Invalid Order Id" },

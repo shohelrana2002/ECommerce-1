@@ -51,7 +51,7 @@ export default async function AdminDashboard() {
     date.setDate(date.getDate() - i);
     date.setHours(0, 0, 0, 0);
     const nextDay = new Date(date);
-    nextDay.setDate(nextDay.getDay() + 1);
+    nextDay.setDate(nextDay.getDate() + 1);
 
     const ordersCount = orders?.filter(
       (o) => new Date(o?.createdAt) >= date && new Date(o?.createdAt) < nextDay
